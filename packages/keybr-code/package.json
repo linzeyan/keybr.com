@@ -6,9 +6,9 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/lang": "*",
-    "@keybr/rand": "*",
-    "@keybr/textinput": "*"
+    "@keybr/lang": "workspace:*",
+    "@keybr/rand": "workspace:*",
+    "@keybr/textinput": "workspace:*"
   },
   "devDependencies": {
     "peggy": "^5.1.0"

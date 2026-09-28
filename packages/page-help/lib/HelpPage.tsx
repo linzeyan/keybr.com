@@ -7,7 +7,6 @@ import { StaticText } from "@keybr/textinput-ui";
 import { Article, Figure } from "@keybr/widget";
 import { FormattedMessage } from "react-intl";
 import { alphabet } from "./english.ts";
-import { ExampleLink } from "./ExampleLink.tsx";
 import { KeySetIllustration } from "./figures.tsx";
 import * as styles from "./HelpApp.module.less";
 
@@ -227,66 +226,6 @@ export function HelpPage() {
           <ZonesLayer />
         </VirtualKeyboard>
       </Figure>
-
-      <FormattedMessage
-        id="help.section6"
-        defaultMessage={
-          "<h2>The effectiveness of this application</h2>" +
-          "<p>We selected a few example profiles to show you how people progress in learning touch typing when using this application. These are real, anonymized user profiles. Hopefully they will inspire you to keep learning!</p>"
-        }
-      />
-
-      <ul>
-        <li>
-          <FormattedMessage
-            id="help.example1"
-            defaultMessage="<a>Example 1</a>, from 30 to 70 WPM after 4 hours 20 minutes of practicing in the course of 15 days."
-            values={{
-              a: (chunks) => <ExampleLink index={1}>{chunks}</ExampleLink>,
-            }}
-          />
-        </li>
-
-        <li>
-          <FormattedMessage
-            id="help.example2"
-            defaultMessage="<a>Example 2</a>, from 35 to 70 WPM after 2 hours and 20 minutes of practicing in the course of 12 days."
-            values={{
-              a: (chunks) => <ExampleLink index={2}>{chunks}</ExampleLink>,
-            }}
-          />
-        </li>
-
-        <li>
-          <FormattedMessage
-            id="help.example3"
-            defaultMessage="<a>Example 3</a>, a decent jump from less than 20 to 40 WPM after 5 hours and 30 minutes of practicing in the course of 11 days."
-            values={{
-              a: (chunks) => <ExampleLink index={3}>{chunks}</ExampleLink>,
-            }}
-          />
-        </li>
-
-        <li>
-          <FormattedMessage
-            id="help.example4"
-            defaultMessage="<a>Example 4</a>, after 2 hours and 10 minutes of practicing in the course of 11 days, typing speed stayed at ~70 WPM (which is already pretty high), but accuracy improved."
-            values={{
-              a: (chunks) => <ExampleLink index={4}>{chunks}</ExampleLink>,
-            }}
-          />
-        </li>
-
-        <li>
-          <FormattedMessage
-            id="help.example5"
-            defaultMessage="<a>Example 5</a>, from 20 to 45 WPM after about 10 hours of practicing in the course of 22 day (yes, sometimes it takes longer)."
-            values={{
-              a: (chunks) => <ExampleLink index={5}>{chunks}</ExampleLink>,
-            }}
-          />
-        </li>
-      </ul>
     </Article>
   );
 }

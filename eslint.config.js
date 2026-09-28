@@ -1,5 +1,3 @@
-/* eslint-disable n/no-extraneous-import */
-
 import js from "@eslint/js";
 import keybr from "@keybr/scripts/eslint-plugin-keybr.js";
 import confusingBrowserGlobals from "confusing-browser-globals";
@@ -41,7 +39,16 @@ export default [
       "**/*.test.tsx",
     ],
     plugins: { "react-hooks": reactHooks },
-    rules: reactHooks.configs.recommended.rules,
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      // The React Compiler rules of react-hooks v7 flag upstream hooks that
+      // predate them, and this app does not use the compiler.
+      "react-hooks/immutability": "off",
+      "react-hooks/preserve-manual-memoization": "off",
+      "react-hooks/refs": "off",
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/set-state-in-render": "off",
+    },
   },
   {
     plugins: {
@@ -142,7 +149,6 @@ export default [
           "@fastr/middleware-session",
           "@fastr/middleware-session-file-store",
           "@fastr/middleware-static-files",
-          "@fastr/middleware-websocket",
           "@fastr/status",
           "@mdi/js",
           "@sosimple/fsx",

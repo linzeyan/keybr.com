@@ -1,4 +1,5 @@
 import {
+  Book,
   BookPreview,
   BookSelector,
   ParagraphPreview,
@@ -45,6 +46,7 @@ export function BooksLessonSettings({
         })}
       >
         <BookSelector
+          books={Book.forLanguage(lesson.model.language)}
           book={book}
           onChange={(book) => {
             updateSettings(
@@ -65,11 +67,12 @@ export function BooksLessonSettings({
           }}
         />
         <ParagraphPreview
+          book={book}
           paragraphs={paragraphs}
           paragraphIndex={paragraphIndex}
         />
         <Spacer size={3} />
-        <BookTextProcessing />
+        <BookTextProcessing zhuyin={book.language.script === "bopomofo"} />
         <TargetSpeedProp />
         <LessonLengthProp />
       </FieldSet>
@@ -77,7 +80,11 @@ export function BooksLessonSettings({
   );
 }
 
-function BookTextProcessing(): ReactNode {
+function BookTextProcessing({
+  zhuyin,
+}: {
+  readonly zhuyin: boolean;
+}): ReactNode {
   const { formatMessage } = useIntl();
   const { settings, updateSettings } = useSettings();
   return (
@@ -99,23 +106,26 @@ function BookTextProcessing(): ReactNode {
           }}
         />
       </Field>
-      <Field>
-        <CheckBox
-          checked={settings.get(lessonProps.books.lowercase)}
-          label={formatMessage({
-            id: "t_Transform_to_lowercase",
-            defaultMessage: "Transform to lowercase",
-          })}
-          title={formatMessage({
-            id: "settings.customTextLowercase.description",
-            defaultMessage:
-              "Transform all text to lower case to make it simpler to type.",
-          })}
-          onChange={(value) => {
-            updateSettings(settings.set(lessonProps.books.lowercase, value));
-          }}
-        />
-      </Field>
+      {/* Zhuyin has no letter case. */}
+      {zhuyin || (
+        <Field>
+          <CheckBox
+            checked={settings.get(lessonProps.books.lowercase)}
+            label={formatMessage({
+              id: "t_Transform_to_lowercase",
+              defaultMessage: "Transform to lowercase",
+            })}
+            title={formatMessage({
+              id: "settings.customTextLowercase.description",
+              defaultMessage:
+                "Transform all text to lower case to make it simpler to type.",
+            })}
+            onChange={(value) => {
+              updateSettings(settings.set(lessonProps.books.lowercase, value));
+            }}
+          />
+        </Field>
+      )}
     </FieldList>
   );
 }

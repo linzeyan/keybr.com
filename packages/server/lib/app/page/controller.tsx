@@ -3,7 +3,7 @@ import { Context } from "@fastr/core";
 import { inject, injectable } from "@fastr/invert";
 import { CanonicalHandler } from "@fastr/middleware-canonical";
 import { type RouterState } from "@fastr/middleware-router";
-import { defaultLocale, loadIntl, PreferredLocaleContext } from "@keybr/intl";
+import { defaultLocale, loadIntl } from "@keybr/intl";
 import { Shell, View } from "@keybr/pages-server";
 import {
   type PageData,
@@ -15,7 +15,7 @@ import { SettingsDatabase } from "@keybr/settings-database";
 import { staticTheme, ThemeContext, ThemePrefs } from "@keybr/themes";
 import { type IntlShape, RawIntlProvider } from "react-intl";
 import { type AuthState } from "../auth/index.ts";
-import { localePattern, pIntl, preferredLocale } from "./intl.ts";
+import { localePattern, pIntl } from "./intl.ts";
 
 @injectable()
 @controller()
@@ -105,19 +105,6 @@ export class Controller {
     return this.renderPage(ctx, Pages.help, intl);
   }
 
-  @http.GET(`${Pages.highScores.path}`)
-  async ["high-scores"](ctx: Context<RouterState & AuthState>) {
-    return this.renderPage(ctx, Pages.highScores);
-  }
-
-  @http.GET(`/{locale:${localePattern}}${Pages.highScores.path}`)
-  async ["high-scores-18n"](
-    ctx: Context<RouterState & AuthState>,
-    @pathParam("locale", pIntl) intl: IntlShape,
-  ) {
-    return this.renderPage(ctx, Pages.highScores, intl);
-  }
-
   @http.GET(`${Pages.layouts.path}`)
   async ["layouts"](ctx: Context<RouterState & AuthState>) {
     return this.renderPage(ctx, Pages.layouts);
@@ -142,45 +129,6 @@ export class Controller {
     @pathParam("locale", pIntl) intl: IntlShape,
   ) {
     return this.renderPage(ctx, Pages.typingTest, intl);
-  }
-
-  @http.GET(`${Pages.multiplayer.path}`)
-  async ["multiplayer"](ctx: Context<RouterState & AuthState>) {
-    return this.renderPage(ctx, Pages.multiplayer);
-  }
-
-  @http.GET(`/{locale:${localePattern}}${Pages.multiplayer.path}`)
-  async ["multiplayer-i18n"](
-    ctx: Context<RouterState & AuthState>,
-    @pathParam("locale", pIntl) intl: IntlShape,
-  ) {
-    return this.renderPage(ctx, Pages.multiplayer, intl);
-  }
-
-  @http.GET(`${Pages.termsOfService.path}`)
-  async ["terms-of-service"](ctx: Context<RouterState & AuthState>) {
-    return this.renderPage(ctx, Pages.termsOfService);
-  }
-
-  @http.GET(`/{locale:${localePattern}}${Pages.termsOfService.path}`)
-  async ["terms-of-service-i18n"](
-    ctx: Context<RouterState & AuthState>,
-    @pathParam("locale", pIntl) intl: IntlShape,
-  ) {
-    return this.renderPage(ctx, Pages.termsOfService, intl);
-  }
-
-  @http.GET(`${Pages.privacyPolicy.path}`)
-  async ["privacy-policy"](ctx: Context<RouterState & AuthState>) {
-    return this.renderPage(ctx, Pages.privacyPolicy);
-  }
-
-  @http.GET(`/{locale:${localePattern}}${Pages.privacyPolicy.path}`)
-  async ["privacy-policy-i18n"](
-    ctx: Context<RouterState & AuthState>,
-    @pathParam("locale", pIntl) intl: IntlShape,
-  ) {
-    return this.renderPage(ctx, Pages.privacyPolicy, intl);
   }
 
   async pageData(
@@ -215,13 +163,11 @@ export class Controller {
 
     return this.view.renderPage(
       <RawIntlProvider value={intl}>
-        <PreferredLocaleContext.Provider value={preferredLocale(ctx)}>
-          <PageDataContext.Provider value={pageData}>
-            <ThemeContext.Provider value={staticTheme(themePrefs(ctx))}>
-              <Shell page={page} headers={ctx.request.headers} />
-            </ThemeContext.Provider>
-          </PageDataContext.Provider>
-        </PreferredLocaleContext.Provider>
+        <PageDataContext.Provider value={pageData}>
+          <ThemeContext.Provider value={staticTheme(themePrefs(ctx))}>
+            <Shell page={page} headers={ctx.request.headers} />
+          </ThemeContext.Provider>
+        </PageDataContext.Provider>
       </RawIntlProvider>,
     );
   }

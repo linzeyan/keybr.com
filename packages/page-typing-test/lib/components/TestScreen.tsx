@@ -1,9 +1,12 @@
+import { useKeyboard } from "@keybr/keyboard";
 import { Screen } from "@keybr/pages-shared";
+import { useSettings } from "@keybr/settings";
 import { type LineList, makeStats } from "@keybr/textinput";
+import { emulateLayout } from "@keybr/textinput-events";
 import { useSoundPlayer } from "@keybr/textinput-sounds";
 import { TextArea } from "@keybr/textinput-ui";
 import { Box, type Focusable, Spacer, useView } from "@keybr/widget";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   type TextGenerator,
   TextGeneratorLoader,
@@ -34,7 +37,9 @@ function Controller({
   mark: unknown;
 }) {
   const { setView } = useView(views);
+  const { settings: rawSettings } = useSettings();
   const settings = useCompositeSettings();
+  const keyboard = useKeyboard();
   const focusRef = useRef<Focusable>(null);
   const player = useSoundPlayer();
   const [session, setSession] = useState(() => nextTest(settings, generator));
@@ -46,6 +51,24 @@ function Controller({
     setSession(session);
     setLines(session.getLines());
   }, [settings, generator, mark]);
+  // Maps the physical keys to Zhuyin, so the OS stays in English input.
+  const { onKeyDown, onKeyUp, onInput } = useMemo(
+    () =>
+      emulateLayout(rawSettings, keyboard, {
+        onKeyDown: session.handleKeyDown,
+        onKeyUp: session.handleKeyUp,
+        onInput: (event) => {
+          const { feedback, progress, completed } = session.handleInput(event);
+          setLines(session.getLines());
+          setProgress(progress);
+          player(feedback);
+          if (completed) {
+            setView("report", { result: makeResult(session) });
+          }
+        },
+      }),
+    [rawSettings, keyboard, session, player, setView],
+  );
   return (
     <Screen>
       <Toolbar
@@ -70,18 +93,9 @@ function Controller({
               setSession(session);
               setLines(session.getLines());
             }}
-            onKeyDown={session.handleKeyDown}
-            onKeyUp={session.handleKeyUp}
-            onInput={(event) => {
-              const { feedback, progress, completed } =
-                session.handleInput(event);
-              setLines(session.getLines());
-              setProgress(progress);
-              player(feedback);
-              if (completed) {
-                setView("report", { result: makeResult(session) });
-              }
-            }}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
+            onInput={onInput}
             lineTemplate={LineTemplate}
           />
           <TestProgress progress={progress} />

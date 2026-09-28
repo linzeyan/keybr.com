@@ -1,12 +1,10 @@
 import { defaultLocale } from "@keybr/intl";
 import {
-  mdiCarSide,
   mdiChartAreaspline,
   mdiHelpCircleOutline,
   mdiKeyboard,
   mdiKeyboardOutline,
   mdiSpeedometer,
-  mdiTrophyOutline,
 } from "@mdi/js";
 import { defineMessage, type MessageDescriptor } from "react-intl";
 import { type AnonymousUser, type AnyUser, type NamedUser } from "./types.ts";
@@ -30,9 +28,9 @@ export type PageInfo = {
 
 export namespace Pages {
   const meta: Meta[] = [
-    { property: "fb:app_id", content: "545353762151265" },
     { property: "og:type", content: "website" },
-    { property: "og:url", content: "https://www.keybr.com/" },
+    // Relative, resolved against the deployment's base URL when rendered.
+    { property: "og:url", content: "/" },
     { property: "og:site_name", content: "keybr.com - Typing lessons" },
     { property: "og:title", content: "keybr.com - Typing lessons" },
     {
@@ -40,10 +38,7 @@ export namespace Pages {
       content:
         "Teaching the world to type at the speed of thought! Typing lessons that work.",
     },
-    { property: "og:image", content: "https://www.keybr.com/cover.png" },
-    { name: "twitter:card", content: "summary" },
-    { name: "twitter:site", content: "@keybrcom" },
-    { name: "twitter:creator", content: "@keybrcom" },
+    { property: "og:image", content: "/cover.png" },
   ];
 
   export const account = {
@@ -142,64 +137,6 @@ export namespace Pages {
     ],
   } satisfies PageInfo;
 
-  export const highScores = {
-    path: "/high-scores",
-    title: defineMessage({
-      id: "t_High_Scores",
-      defaultMessage: "High Scores",
-    }),
-    link: {
-      label: defineMessage({
-        id: "t_High_Scores",
-        defaultMessage: "High Scores",
-      }),
-      title: defineMessage({
-        id: "page.highScores.description",
-        defaultMessage: "The high score table for the fastest users.",
-      }),
-      icon: mdiTrophyOutline,
-    },
-    meta: [
-      ...meta,
-      {
-        name: "description",
-        content: defineMessage({
-          id: "page.highScores.description",
-          defaultMessage: "The high score table for the fastest users.",
-        }),
-      },
-    ],
-  } satisfies PageInfo;
-
-  export const multiplayer = {
-    path: "/multiplayer",
-    title: defineMessage({
-      id: "t_Multiplayer",
-      defaultMessage: "Multiplayer",
-    }),
-    link: {
-      label: defineMessage({
-        id: "t_Multiplayer",
-        defaultMessage: "Multiplayer",
-      }),
-      title: defineMessage({
-        id: "page.multiplayer.description",
-        defaultMessage: "Online multiplayer type racing game.",
-      }),
-      icon: mdiCarSide,
-    },
-    meta: [
-      ...meta,
-      {
-        name: "description",
-        content: defineMessage({
-          id: "page.multiplayer.description",
-          defaultMessage: "Online multiplayer type racing game.",
-        }),
-      },
-    ],
-  } satisfies PageInfo;
-
   export const typingTest = {
     path: "/typing-test",
     title: defineMessage({
@@ -256,36 +193,6 @@ export namespace Pages {
         }),
       },
     ],
-  } satisfies PageInfo;
-
-  export const termsOfService = {
-    path: "/terms-of-service",
-    title: defineMessage({
-      id: "t_Terms_of_Service",
-      defaultMessage: "Terms of Service",
-    }),
-    link: {
-      label: defineMessage({
-        id: "t_Terms_of_Service",
-        defaultMessage: "Terms of Service",
-      }),
-    },
-    meta: [{ name: "robots", content: "noindex" }],
-  } satisfies PageInfo;
-
-  export const privacyPolicy = {
-    path: "/privacy-policy",
-    title: defineMessage({
-      id: "t_Privacy_Policy",
-      defaultMessage: "Privacy Policy",
-    }),
-    link: {
-      label: defineMessage({
-        id: "t_Privacy_Policy",
-        defaultMessage: "Privacy Policy",
-      }),
-    },
-    meta: [{ name: "robots", content: "noindex" }],
   } satisfies PageInfo;
 
   export function profileOf(arg: string): string;

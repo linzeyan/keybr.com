@@ -6,7 +6,7 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/pages-shared": "*"
+    "@keybr/pages-shared": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

@@ -5,10 +5,11 @@
   "type": "module",
   "main": "lib/index.ts",
   "dependencies": {
-    "@keybr/keyboard": "*",
-    "@keybr/keyboard-io": "*",
-    "@keybr/phonetic-model": "*",
-    "@keybr/unicode": "*",
+    "@keybr/keyboard": "workspace:*",
+    "@keybr/keyboard-io": "workspace:*",
+    "@keybr/phonetic-model": "workspace:*",
+    "@keybr/rand": "workspace:*",
+    "@keybr/unicode": "workspace:*",
     "@types/commonmark": "^0.27.10",
     "chalk": "^6.0.0",
     "commonmark": "^0.31.2"
@@ -20,6 +21,7 @@
     "test": "tstest --test 'lib/**/*.test.{ts,tsx}'",
     "generate-books": "tsnode ./lib/generate-books.ts",
     "generate-languages": "tsnode ./lib/generate-languages.ts",
-    "generate-layouts": "tsnode ./lib/generate-layouts.ts"
+    "generate-layouts": "tsnode ./lib/generate-layouts.ts",
+    "generate-zhuyin": "tsnode ./lib/generate-zhuyin.ts"
   }
 }

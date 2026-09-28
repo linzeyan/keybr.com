@@ -6,9 +6,9 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/identicon": "*",
-    "@keybr/intl": "*",
-    "@keybr/widget": "*"
+    "@keybr/identicon": "workspace:*",
+    "@keybr/intl": "workspace:*",
+    "@keybr/widget": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

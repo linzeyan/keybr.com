@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useContext } from "react";
-import { type AnyUser, type PageData } from "./types.ts";
+import { type PageData } from "./types.ts";
 
 const pageDataGlobalName = "__PAGE_DATA__";
 
@@ -34,8 +34,4 @@ export function usePageData(): PageData {
     );
   }
   return value;
-}
-
-export function isPremiumUser(user: AnyUser): boolean {
-  return user.id != null && user.premium;
 }

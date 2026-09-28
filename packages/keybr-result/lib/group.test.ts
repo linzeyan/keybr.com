@@ -8,7 +8,7 @@ import { LocalDate } from "./localdate.ts";
 test("group results by layout", () => {
   const faker = new ResultFaker();
   const r1 = faker.nextResult({ layout: Layout.EN_US });
-  const r2 = faker.nextResult({ layout: Layout.DE_DE });
+  const r2 = faker.nextResult({ layout: Layout.ZH_TW_DACHEN });
 
   const map = new ResultGroups(({ layout }) => layout);
 
@@ -27,12 +27,12 @@ test("group results by layout", () => {
 
   map.add(r2);
 
-  deepEqual([...map.keys()], [Layout.EN_US, Layout.DE_DE]);
+  deepEqual([...map.keys()], [Layout.EN_US, Layout.ZH_TW_DACHEN]);
   deepEqual(
     [...map],
     [
       { key: Layout.EN_US, results: [r1] },
-      { key: Layout.DE_DE, results: [r2] },
+      { key: Layout.ZH_TW_DACHEN, results: [r2] },
     ],
   );
 });

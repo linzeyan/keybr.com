@@ -15,7 +15,9 @@ export class SessionModule implements Module {
       rolling: true,
       key: Env.getString("COOKIE_NAME", "session"),
       maxAge: Env.getNumber("COOKIE_MAX_AGE", 1209600), // 14 days in seconds
-      domain: Env.getString("COOKIE_DOMAIN", ".www.keybr.com"),
+      // No default: a cookie for another domain is silently dropped by the
+      // browser, and nobody could sign in to a self-hosted site.
+      domain: Env.getString("COOKIE_DOMAIN"),
       path: Env.getString("COOKIE_PATH", "/"),
       httpOnly: Env.getBoolean("COOKIE_HTTP_ONLY", true),
       secure: Env.getBoolean("COOKIE_SECURE", true),

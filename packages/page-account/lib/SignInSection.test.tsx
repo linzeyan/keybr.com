@@ -17,14 +17,6 @@ test("render", () => {
       exact: false,
     }),
   );
-  isNotNull(
-    r.queryByText("Sign-in with your preferred social network.", {
-      exact: false,
-    }),
-  );
-  isNotNull(r.queryByText("Google", { exact: false }));
-  isNotNull(r.queryByText("Microsoft", { exact: false }));
-  isNotNull(r.queryByText("Facebook", { exact: false }));
 
   r.unmount();
 });

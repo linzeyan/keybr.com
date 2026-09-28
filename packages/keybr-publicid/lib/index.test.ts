@@ -145,6 +145,5 @@ test("convert to user", () => {
     id: "example1",
     name: "Example User 1",
     imageUrl: null,
-    premium: false,
   });
 });

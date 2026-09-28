@@ -1,9 +1,10 @@
 import { describe, it, test } from "node:test";
-import { Layout, loadKeyboard } from "@keybr/keyboard";
+import { Language, Layout, loadKeyboard } from "@keybr/keyboard";
 import { FakePhoneticModel } from "@keybr/phonetic-model";
+import { loadModelSync } from "@keybr/phonetic-model/lib/fs-load.ts";
 import { makeKeyStatsMap } from "@keybr/result";
 import { Settings } from "@keybr/settings";
-import { deepEqual, equal } from "rich-assert";
+import { deepEqual, equal, match } from "rich-assert";
 import { fakeKeyStatsMap, printLessonKeys } from "./fakes.ts";
 import { GuidedLesson } from "./guided.ts";
 import { LessonKey } from "./key.ts";
@@ -143,6 +144,24 @@ test("provide key set", () => {
       isFocused: true,
       isForced: false,
     }),
+  );
+});
+
+test("unlock zhuyin letters in rounds of a final, an initial and a tone", () => {
+  const settings = new Settings();
+  const keyboard = loadKeyboard(Layout.ZH_TW_DACHEN);
+  const { model } = loadModelSync(Language.ZH_TW);
+  const lesson = new GuidedLesson(settings, keyboard, model, []);
+  const lessonKeys = lesson.update(makeKeyStatsMap(lesson.letters, []));
+  const labels = (keys: Iterable<LessonKey>) =>
+    [...keys].map(({ letter }) => letter.label).join("");
+
+  // The first lesson can make real syllables with tones, such as "ㄉㄧˋ".
+  match(labels(lessonKeys.findIncludedKeys()), /^([ㄚ-ㄩ][ㄅ-ㄙ][ˊˇˋ˙]){2}$/u);
+  // The tone marks run out after four rounds, the rest keeps alternating.
+  match(
+    labels(lessonKeys),
+    /^([ㄚ-ㄩ][ㄅ-ㄙ][ˊˇˋ˙]){4}([ㄚ-ㄩ][ㄅ-ㄙ]){12}[ㄅ-ㄙ]{5}$/u,
   );
 });
 

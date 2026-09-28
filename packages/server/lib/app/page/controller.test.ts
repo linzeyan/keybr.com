@@ -13,9 +13,7 @@ for (const path of [
   "/",
   "/account",
   "/help",
-  "/high-scores",
   "/layouts",
-  "/multiplayer",
   "/profile",
   "/profile/example1",
   "/profile/example2",
@@ -23,8 +21,6 @@ for (const path of [
   "/profile/example4",
   "/profile/example5",
   "/typing-test",
-  "/terms-of-service",
-  "/privacy-policy",
 ]) {
   test(`load page "${path}"`, async () => {
     // Arrange.

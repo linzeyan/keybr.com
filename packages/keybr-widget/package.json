@@ -7,8 +7,8 @@
   "types": ".types/index.d.ts",
   "sideEffects": false,
   "dependencies": {
-    "@keybr/color": "*",
-    "@keybr/lang": "*"
+    "@keybr/color": "workspace:*",
+    "@keybr/lang": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

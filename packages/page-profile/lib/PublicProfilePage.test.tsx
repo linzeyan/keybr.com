@@ -26,7 +26,6 @@ test("render", async () => {
                 id: "abc",
                 name: "somebody",
                 imageUrl: null,
-                premium: false,
               }}
             />
           </FakeResultContext>

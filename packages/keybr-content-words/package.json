@@ -6,9 +6,9 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/content": "*",
-    "@keybr/debug": "*",
-    "@keybr/keyboard": "*"
+    "@keybr/content": "workspace:*",
+    "@keybr/debug": "workspace:*",
+    "@keybr/keyboard": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

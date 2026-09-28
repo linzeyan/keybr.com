@@ -3,8 +3,7 @@ import { Enum, type EnumItem } from "@keybr/lang";
 import coverImageEnAliceWonderland from "../../assets/cover-image-en-alice-wonderland.jpg";
 import coverImageEnCallWild from "../../assets/cover-image-en-call-wild.jpg";
 import coverImageEnJekyllHyde from "../../assets/cover-image-en-jekyll-hyde.jpg";
-import coverImageEsMarianela from "../../assets/cover-image-es-marianela.jpg";
-import coverImageFrAliceWonderland from "../../assets/cover-image-fr-alice-wonderland.jpg";
+import coverImageZhTwBaihua from "../../assets/cover-image-zh-tw-baihua.jpg";
 
 export class Book implements EnumItem {
   static readonly EN_ALICE_WONDERLAND = new Book(
@@ -28,36 +27,29 @@ export class Book implements EnumItem {
     /* author= */ "Jack London",
     /* coverImage= */ coverImageEnCallWild,
   );
-  static readonly ES_MARIANELA = new Book(
-    /* id= */ "es-marianela",
-    /* language= */ Language.ES,
-    /* title= */ "Marianela",
-    /* author= */ "Benito Pérez Galdós",
-    /* coverImage= */ coverImageEsMarianela,
-  );
-  static readonly DE_ALICE_WONDERLAND = new Book(
-    /* id= */ "de-alice-wonderland",
-    /* language= */ Language.DE,
-    /* title= */ "Alice’s Abenteuer im Wunderland",
-    /* author= */ "Lewis Carroll, Antonie Zimmermann",
-    /* coverImage= */ coverImageEnAliceWonderland,
-  );
-  static readonly FR_ALICE_WONDERLAND = new Book(
-    /* id= */ "fr-alice-wonderland",
-    /* language= */ Language.FR,
-    /* title= */ "Aventures D’Alice Au Pays Des Merveilles",
-    /* author= */ "Lewis Carroll, Henri Bué",
-    /* coverImage= */ coverImageFrAliceWonderland,
+  static readonly ZH_TW_BAIHUA = new Book(
+    /* id= */ "zh-tw-baihua",
+    /* language= */ Language.ZH_TW,
+    /* title= */ "白話文選",
+    /* author= */ "朱自清、許地山、胡適、魯迅",
+    /* coverImage= */ coverImageZhTwBaihua,
   );
 
   static readonly ALL = new Enum<Book>(
     Book.EN_ALICE_WONDERLAND,
     Book.EN_JEKYLL_HYDE,
     Book.EN_CALL_WILD,
-    Book.ES_MARIANELA,
-    Book.DE_ALICE_WONDERLAND,
-    Book.FR_ALICE_WONDERLAND,
+    Book.ZH_TW_BAIHUA,
   );
+
+  /** Returns the books which can be typed in the given language. */
+  static forLanguage(language: Language): Book[] {
+    // The Zhuyin layout types nothing but Zhuyin, and vice versa.
+    const zhuyin = language.script === "bopomofo";
+    return Book.ALL.filter(
+      (book) => (book.language.script === "bopomofo") === zhuyin,
+    );
+  }
 
   private constructor(
     readonly id: string,

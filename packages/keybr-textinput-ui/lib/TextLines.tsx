@@ -15,10 +15,14 @@ import {
 } from "react";
 import { renderChars } from "./chars.tsx";
 import { Cursor } from "./Cursor.tsx";
-import { textItemStyle } from "./styles.ts";
+import { glyphItemStyle, textItemStyle } from "./styles.ts";
 import * as styles from "./TextLines.module.less";
 
 export type TextLineSize = "X0" | "X1" | "X2" | "X3";
+
+// A line neither starts with a closing punctuation nor ends with an opening one.
+const noBreakBefore = /^[\p{Pe}\p{Pf}\p{Po}\p{Pd}]/u;
+const noBreakAfter = /[\p{Ps}\p{Pi}]$/u;
 
 export const TextLines = memo(function TextLines({
   settings = textDisplaySettings,
@@ -85,23 +89,38 @@ const TextLine = memo(
     const items: Char[][] = [];
     let itemChars: Char[] = [];
     let ws = false;
+    let glyph = "";
     for (let i = 0; i < chars.length; i++) {
       const char = chars[i];
-      switch (char.codePoint) {
-        case 0x0009:
-        case 0x000a:
-        case 0x0020:
-          ws = true;
-          break;
-        default:
-          if (ws) {
-            if (itemChars.length > 0) {
-              items.push(itemChars);
-              itemChars = [];
+      if (char.glyph) {
+        // Every glyph is an item, so that a line of Hanzi wraps anywhere,
+        // but not apart from the punctuation next to it.
+        if (
+          itemChars.length > 0 &&
+          !noBreakBefore.test(char.glyph) &&
+          !noBreakAfter.test(glyph)
+        ) {
+          items.push(itemChars);
+          itemChars = [];
+        }
+        glyph = char.glyph;
+      } else if (char.glyph == null && itemChars[0]?.glyph == null) {
+        switch (char.codePoint) {
+          case 0x0009:
+          case 0x000a:
+          case 0x0020:
+            ws = true;
+            break;
+          default:
+            if (ws) {
+              if (itemChars.length > 0) {
+                items.push(itemChars);
+                itemChars = [];
+              }
+              ws = false;
             }
-            ws = false;
-          }
-          break;
+            break;
+        }
       }
       itemChars.push(char);
     }
@@ -135,7 +154,15 @@ const TextItem = memo(
     readonly settings: TextDisplaySettings;
     readonly chars: readonly Char[];
   }): ReactNode {
-    return <span style={textItemStyle}>{renderChars(settings, chars)}</span>;
+    return (
+      <span
+        style={
+          chars.some(({ glyph }) => glyph) ? glyphItemStyle : textItemStyle
+        }
+      >
+        {renderChars(settings, chars)}
+      </span>
+    );
   },
   (prevProps, nextProps) =>
     prevProps.settings === nextProps.settings &&

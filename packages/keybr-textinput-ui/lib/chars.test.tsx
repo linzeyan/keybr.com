@@ -123,6 +123,89 @@ test("render styled chars", () => {
   );
 });
 
+test("render glyph chars", () => {
+  // A glyph shows the state of all of its keys, and the garbage typed
+  // inside of the glyph under the cursor stays visible. A missed Hanzi
+  // hints at its Zhuyin until it is typed, a punctuation is its own key
+  // and has no hint.
+  deepEqual(
+    renderChars(textDisplaySettings, [
+      { codePoint: /* "ㄋ" */ 0x310b, attrs: Attr.Hit, glyph: "你" },
+      { codePoint: /* "ㄧ" */ 0x3127, attrs: Attr.Hit, glyph: "" },
+      { codePoint: /* "ˇ" */ 0x02c7, attrs: Attr.Hit, glyph: "" },
+      { codePoint: /* "ㄊ" */ 0x310a, attrs: Attr.Hit, glyph: "天" },
+      { codePoint: /* "ㄧ" */ 0x3127, attrs: Attr.Miss, glyph: "" },
+      { codePoint: /* "ㄢ" */ 0x3122, attrs: Attr.Hit, glyph: "" },
+      { codePoint: /* " " */ 0x0020, attrs: Attr.Hit, glyph: "" },
+      { codePoint: /* "，" */ 0xff0c, attrs: Attr.Miss, glyph: "，" },
+      { codePoint: /* "ㄊ" */ 0x310a, attrs: Attr.Hit, glyph: "他" },
+      { codePoint: /* "ㄅ" */ 0x3105, attrs: Attr.Garbage },
+      {
+        codePoint: /* "ㄚ" */ 0x311a,
+        attrs: Attr.Cursor | Attr.Miss,
+        glyph: "",
+      },
+      { codePoint: /* " " */ 0x0020, attrs: Attr.Normal, glyph: "" },
+      { codePoint: /* "ㄐ" */ 0x3110, attrs: Attr.Normal, glyph: "今" },
+      { codePoint: /* "ㄧ" */ 0x3127, attrs: Attr.Normal, glyph: "" },
+      { codePoint: /* "ㄣ" */ 0x3123, attrs: Attr.Normal, glyph: "" },
+      { codePoint: /* " " */ 0x0020, attrs: Attr.Normal, glyph: "" },
+    ]),
+    [
+      <span
+        key={0}
+        className="glyph"
+        style={{ color: "var(--textinput--hit__color)" }}
+        data-hint={undefined}
+      >
+        你
+      </span>,
+      <span
+        key={1}
+        className="glyph"
+        style={{ color: "var(--textinput--miss__color)" }}
+        data-hint={undefined}
+      >
+        天
+      </span>,
+      <span
+        key={2}
+        className="glyph"
+        style={{ color: "var(--textinput--miss__color)" }}
+        data-hint={undefined}
+      >
+        ，
+      </span>,
+      <span
+        key={3}
+        className="glyph cursor"
+        style={{ color: "var(--textinput__color)" }}
+        data-hint="ㄊㄚ"
+      >
+        他
+      </span>,
+      <span
+        key={4}
+        className={undefined}
+        style={{
+          color: "var(--textinput__color)",
+          backgroundColor: "var(--textinput--miss__color)",
+        }}
+      >
+        ㄅ
+      </span>,
+      <span
+        key={5}
+        className="glyph"
+        style={{ color: "var(--textinput__color)" }}
+        data-hint={undefined}
+      >
+        今
+      </span>,
+    ],
+  );
+});
+
 test("render special chars", () => {
   deepEqual(
     renderChars(textDisplaySettings, [

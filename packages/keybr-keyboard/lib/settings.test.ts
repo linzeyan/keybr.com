@@ -9,8 +9,8 @@ import { KeyboardOptions, keyboardProps } from "./settings.ts";
 test("use default settings", () => {
   const options = KeyboardOptions.default();
 
-  equal(options.language, Language.EN);
-  equal(options.layout, Layout.EN_US);
+  equal(options.language, Language.ZH_TW);
+  equal(options.layout, Layout.ZH_TW_DACHEN);
   equal(options.geometry, Geometry.ANSI_101);
   equal(options.zones, ZoneMod.STANDARD);
 });
@@ -18,8 +18,9 @@ test("use default settings", () => {
 test("read default settings", () => {
   const options = KeyboardOptions.from(new Settings());
 
-  equal(options.language, Language.EN);
-  equal(options.layout, Layout.EN_US);
+  // A new visitor starts with Zhuyin, even with an English browser.
+  equal(options.language, Language.ZH_TW);
+  equal(options.layout, Layout.ZH_TW_DACHEN);
   equal(options.geometry, Geometry.ANSI_101);
   equal(options.zones, ZoneMod.STANDARD);
 });
@@ -27,80 +28,79 @@ test("read default settings", () => {
 test("read configured values", () => {
   const options = KeyboardOptions.from(
     new Settings()
-      .set(keyboardProps.language, Language.IT)
-      .set(keyboardProps.layout, Layout.IT_IT)
+      .set(keyboardProps.language, Language.ZH_TW)
+      .set(keyboardProps.layout, Layout.ZH_TW_DACHEN)
       .set(keyboardProps.geometry, Geometry.ISO_102)
       .set(keyboardProps.zones, ZoneMod.SYMMETRIC),
   );
 
-  equal(options.language, Language.IT);
-  equal(options.layout, Layout.IT_IT);
+  equal(options.language, Language.ZH_TW);
+  equal(options.layout, Layout.ZH_TW_DACHEN);
   equal(options.geometry, Geometry.ISO_102);
   equal(options.zones, ZoneMod.SYMMETRIC);
 });
 
 describe("update properties", () => {
   it("with a custom language", () => {
-    const options = KeyboardOptions.default().withLanguage(Language.FR);
+    const options = KeyboardOptions.default().withLanguage(Language.ZH_TW);
 
-    equal(options.language, Language.FR);
-    equal(options.layout, Layout.FR_FR);
-    equal(options.geometry, Geometry.ISO_102);
+    equal(options.language, Language.ZH_TW);
+    equal(options.layout, Layout.ZH_TW_DACHEN);
+    equal(options.geometry, Geometry.ANSI_101);
     equal(options.zones, ZoneMod.STANDARD);
   });
 
   it("with a custom language and layout", () => {
     const options = KeyboardOptions.default()
-      .withLanguage(Language.FR)
-      .withLayout(Layout.FR_CA);
+      .withLanguage(Language.EN)
+      .withLayout(Layout.EN_DVORAK);
 
-    equal(options.language, Language.FR);
-    equal(options.layout, Layout.FR_CA);
-    equal(options.geometry, Geometry.ISO_102);
+    equal(options.language, Language.EN);
+    equal(options.layout, Layout.EN_DVORAK);
+    equal(options.geometry, Geometry.ANSI_101);
     equal(options.zones, ZoneMod.STANDARD);
   });
 
   it("with a custom language, layout and geometry", () => {
     const options = KeyboardOptions.default()
-      .withLanguage(Language.FR)
-      .withLayout(Layout.FR_CA)
-      .withGeometry(Geometry.ANSI_101);
+      .withLanguage(Language.EN)
+      .withLayout(Layout.EN_DVORAK)
+      .withGeometry(Geometry.ISO_102);
 
-    equal(options.language, Language.FR);
-    equal(options.layout, Layout.FR_CA);
-    equal(options.geometry, Geometry.ANSI_101);
+    equal(options.language, Language.EN);
+    equal(options.layout, Layout.EN_DVORAK);
+    equal(options.geometry, Geometry.ISO_102);
     equal(options.zones, ZoneMod.STANDARD);
   });
 
   it("with a custom language, layout, geometry and zones", () => {
     const options = KeyboardOptions.default()
-      .withLanguage(Language.FR)
-      .withLayout(Layout.FR_CA)
-      .withGeometry(Geometry.ANSI_101)
+      .withLanguage(Language.EN)
+      .withLayout(Layout.EN_DVORAK)
+      .withGeometry(Geometry.ISO_102)
       .withZones(ZoneMod.SYMMETRIC);
 
-    equal(options.language, Language.FR);
-    equal(options.layout, Layout.FR_CA);
-    equal(options.geometry, Geometry.ANSI_101);
+    equal(options.language, Language.EN);
+    equal(options.layout, Layout.EN_DVORAK);
+    equal(options.geometry, Geometry.ISO_102);
     equal(options.zones, ZoneMod.SYMMETRIC);
   });
 
-  it("mix language and layout", () => {
-    const options = KeyboardOptions.default()
-      .withLanguage(Language.FR)
+  it("reject invalid language and layout combination", () => {
+    // Zhuyin cannot be typed on an English layout, and vice versa.
+    const zhuyin = KeyboardOptions.default()
+      .withLanguage(Language.ZH_TW)
       .withLayout(Layout.EN_DVORAK);
 
-    equal(options.language, Language.FR);
-    equal(options.layout, Layout.EN_DVORAK);
-  });
+    equal(zhuyin.language, Language.ZH_TW);
+    equal(zhuyin.layout, Layout.ZH_TW_DACHEN);
 
-  it("reject invalid language and layout combination", () => {
-    const options = KeyboardOptions.default()
-      .withLanguage(Language.FR)
-      .withLayout(Layout.EL_GR);
+    const english = KeyboardOptions.default()
+      .withLanguage(Language.EN)
+      .withLayout(Layout.ZH_TW_DACHEN);
 
-    equal(options.language, Language.FR);
-    equal(options.layout, Layout.FR_FR);
+    equal(english.language, Language.EN);
+    equal(english.layout, Layout.EN_US);
   });
 });
 

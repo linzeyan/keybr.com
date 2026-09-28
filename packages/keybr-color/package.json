@@ -7,7 +7,7 @@
   "types": ".types/index.d.ts",
   "sideEffects": false,
   "dependencies": {
-    "@keybr/lang": "*"
+    "@keybr/lang": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

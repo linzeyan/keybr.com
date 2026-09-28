@@ -2,7 +2,12 @@ import { type CodePoint, toCodePoints } from "@keybr/unicode";
 
 export type StyledText = string | StyledTextSpan | readonly StyledText[];
 
-export type StyledTextSpan = { readonly text: string; readonly cls: string };
+export type StyledTextSpan = {
+  readonly text: string;
+  readonly cls?: string | null;
+  /** Displayed in place of the text, like a Hanzi in place of its Zhuyin. */
+  readonly glyph?: string;
+};
 
 export const enum Attr {
   Normal = 0,
@@ -16,6 +21,11 @@ export type Char = {
   readonly codePoint: CodePoint;
   readonly attrs: number;
   readonly cls?: string | null;
+  /**
+   * The glyph displayed in place of a group of chars. The first char of the
+   * group holds the glyph, the rest of them hold an empty string.
+   */
+  readonly glyph?: string;
 };
 
 export type Line = {
@@ -62,12 +72,13 @@ export function splitStyledText(
       })),
     );
   } else if (isStyledTextSpan(text)) {
+    const { cls = null, glyph } = text;
     list.push(
-      ...[...toCodePoints(text.text)].map((codePoint) => ({
-        codePoint,
-        cls: text.cls,
-        attrs,
-      })),
+      ...[...toCodePoints(text.text)].map((codePoint, index) =>
+        glyph != null
+          ? { codePoint, cls, attrs, glyph: index === 0 ? glyph : "" }
+          : { codePoint, cls, attrs },
+      ),
     );
   } else {
     throw new TypeError();
@@ -88,6 +99,9 @@ export function charsAreEqual(a: Char, b: Char): boolean {
       return false;
     }
     if (a.cls !== b.cls) {
+      return false;
+    }
+    if (a.glyph !== b.glyph) {
       return false;
     }
   }

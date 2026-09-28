@@ -4,14 +4,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { Parser } from "commonmark";
 import { pathTo } from "./root.ts";
 
-for (const name of [
-  "en-alice-wonderland",
-  "en-call-wild",
-  "en-jekyll-hyde",
-  "es-marianela",
-  "de-alice-wonderland",
-  "fr-alice-wonderland",
-]) {
+for (const name of ["en-alice-wonderland", "en-call-wild", "en-jekyll-hyde"]) {
   generate(
     pathTo(`books/${name}.txt`),
     pathTo(`../keybr-content-books/lib/data/${name}.json`),

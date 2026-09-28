@@ -15,12 +15,14 @@ import { SubMenu } from "./SubMenu.tsx";
 import { ThemeSwitcher } from "./themes/ThemeSwitcher.tsx";
 
 export function NavMenu({ currentPath }: { readonly currentPath: string }) {
-  const { publicUser } = usePageData();
+  const { publicUser, staticSite } = usePageData();
   return (
     <div className={styles.root}>
-      <MenuItem>
-        <AccountLink user={publicUser} />
-      </MenuItem>
+      {!staticSite && (
+        <MenuItem>
+          <AccountLink user={publicUser} />
+        </MenuItem>
+      )}
 
       <MenuItem>
         <ThemeSwitcher />
@@ -36,14 +38,6 @@ export function NavMenu({ currentPath }: { readonly currentPath: string }) {
 
       <MenuItem>
         <MenuItemLink page={Pages.help} />
-      </MenuItem>
-
-      <MenuItem>
-        <MenuItemLink page={Pages.highScores} />
-      </MenuItem>
-
-      <MenuItem>
-        <MenuItemLink page={Pages.multiplayer} />
       </MenuItem>
 
       <MenuItem>

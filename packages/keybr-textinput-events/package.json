@@ -6,10 +6,10 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/keyboard": "*",
-    "@keybr/settings": "*",
-    "@keybr/unicode": "*",
-    "@keybr/widget": "*"
+    "@keybr/keyboard": "workspace:*",
+    "@keybr/settings": "workspace:*",
+    "@keybr/unicode": "workspace:*",
+    "@keybr/widget": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

@@ -35,7 +35,6 @@ test("render named user", () => {
             id: "abc",
             name: "somebody",
             imageUrl: null,
-            premium: false,
           }}
           path="/account"
         />

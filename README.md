@@ -1,41 +1,105 @@
-[![CI](https://github.com/aradzie/keybr.com/actions/workflows/ci.yml/badge.svg)](https://github.com/aradzie/keybr.com/actions/workflows/ci.yml)
+[![CI](https://github.com/linzeyan/keybr.com/actions/workflows/ci.yml/badge.svg)](https://github.com/linzeyan/keybr.com/actions/workflows/ci.yml)
 
-# [keybr.com](https://www.keybr.com/) is not (just) a typing test
+# keybr.com 注音版
 
-<p align="center">
-    <img src="assets/screenshot.png" alt="screenshot" width="600"/>
-</p>
+用 [keybr.com](https://www.keybr.com/) 的方法練習大千注音打字：記錄每一次按鍵，找出你最弱的鍵，自動產生針對這些鍵的練習。
 
-It's the smartest way to learn touch typing and improve your typing speed.
-On the surface, it looks pretty simple: it shows you a piece of text, and you type it out.
-But the devil is in the details — keybr.com offers a few unique features:
+這是 keybr.com 的分支，專為台灣的注音大千鍵盤調整，不會合併回上游。
 
-* keybr.com tracks every single keystroke and computes statistics for each individual key.
-* It automatically generates lessons that focus on your weakest keys.
-* You can set your own target typing speed, and it tracks your progress toward that goal.
-* It starts with a small set of the most frequent letters in your language.
-* More letters are added once you reach the target speed with the current ones.
-* It can even predict how many more lessons you will need to complete to reach your target speed.
-* It provides a beautiful profile page with detailed graphs showing your learning progress.
-* It offers plenty of modes and configuration options.
+## 特色
 
-<p align="center">
-    <img src="docs/assets/graph.png" alt="screenshot" width="600"/>
-</p>
+- **直接打注音符號**：作業系統維持英文輸入法，網頁把按鍵對應成大千鍵位上的注音符號。練的是鍵位和指法，不經過選字。
+- **按鍵和實際打字一致**：一聲用空白鍵，二、三、四聲和輕聲打完直接接下一個字。例如「我今天很好」要打 `ㄨㄛˇㄐㄧㄣ ㄊㄧㄢ ㄏㄣˇㄏㄠˇ`。
+- **由少到多解鎖**：從最常用的韻母、聲母、聲調開始，速度達標才加入新的鍵；課程集中練你最弱的鍵。
+- **常用詞模式**：練習小麥注音（McBopomofo）詞庫裡的真實詞彙。
+- **書本模式**：畫面顯示漢字，打對應的注音。收錄朱自清、魯迅、許地山、胡適的八篇白話文。打錯時漢字上方會出現注音提示；標點符號用小麥注音的大千鍵位輸入，例如 `Shift+,` 打出「，」。
+- **打字測驗**：內容全部是注音，使用大千鍵盤。
+- **介面語言**：English、正體中文。
 
-## Can I contribute?
+瀏覽器語言是正體中文時，練習頁預設使用大千鍵盤；其他語言請到「設定」→「鍵盤」，語言選中文（台灣）、排版選「大千」。
 
-Yes!
+## 部署
 
-* **[Give us a ⭐️.](https://github.com/aradzie/keybr.com)** Help this project gain visibility and stand out.
-* **[Report a bug.](https://github.com/aradzie/keybr.com/issues)** If something is not working, let us know.
-* **[Suggest a feature.](https://github.com/aradzie/keybr.com/issues)** We are open to new ideas.
-* **[Translate.](./docs/translations.md)** If you want to see keybr.com in your language.
-* **[Getting started.](./docs/getting_started.md)** Launch a local instance of keybr.com, make a pull request.
-* **[Add a keyboard.](docs/custom_keyboard.md)** Add a custom keyboard to keybr.com
-* **[Add a language.](docs/custom_language.md)** Add a custom language to keybr.com
-* **[Join our Discord server](https://discord.gg/gY4RA4enVH).** To discuss things in a less formal way.
+有兩種方式，兩種都由同一份程式碼產生。
 
-## License
+### Cloudflare Pages（靜態網站）
 
-Released under the GNU Affero General Public License v3.0.
+沒有伺服器，所以沒有帳號功能；練習紀錄和設定只存在瀏覽器裡。
+
+在 Cloudflare Pages 連接這個 repo，設定如下：
+
+| 項目                    | 值                                        |
+| ----------------------- | ----------------------------------------- |
+| Production branch       | `bopomofo`                                |
+| Build command           | `pnpm run build-static`                   |
+| Build output directory  | `build/static`                            |
+| 環境變數 `NODE_VERSION` | `26`                                      |
+| 環境變數 `PNPM_VERSION` | `12.6.0`                                  |
+| 環境變數 `APP_URL`      | 網站網址，例如 `https://keybr.pages.dev/` |
+
+Cloudflare 建置環境預設的 Node.js 和 pnpm 版本太舊，所以要用環境變數指定。`APP_URL` 用來產生分享連結（Open Graph）的網址。
+
+### Docker（自架，有帳號功能）
+
+CI 會把映像檔推到 GitHub Container Registry：`bopomofo` 分支的最新版是 `ghcr.io/linzeyan/keybr.com:bopomofo`，正式版本則是版號，例如 `ghcr.io/linzeyan/keybr.com:0.1.0`。
+
+設定放在容器內的 `/etc/keybr/env`，資料（資料庫、練習紀錄）放在 `/var/lib/keybr`：
+
+```shell
+docker run -d --name keybr \
+  -p 3000:3000 \
+  -v keybr-data:/var/lib/keybr \
+  -v /path/to/env:/etc/keybr/env:ro \
+  ghcr.io/linzeyan/keybr.com:bopomofo
+```
+
+也可以改用 [docker-compose.yaml](docker-compose.yaml)。設定檔範例：
+
+```ini
+APP_URL=https://keybr.example.com/
+COOKIE_DOMAIN=keybr.example.com
+DATABASE_CLIENT=sqlite
+DATABASE_FILENAME=/var/lib/keybr/database.sqlite
+MAIL_DOMAIN=mg.example.com
+MAIL_KEY=<Mailgun API key>
+MAIL_FROM_ADDRESS=keybr@example.com
+MAIL_FROM_NAME=keybr
+```
+
+`APP_URL`、`COOKIE_DOMAIN` 和四個 `MAIL_*` 都必填，少一個伺服器就不會啟動。
+
+- `APP_URL`：用其他網址連進來的請求都會被轉到這個網址。
+- `COOKIE_DOMAIN`：你的網域。Cookie 預設只走 HTTPS，請放在 HTTPS 反向代理後面；只用 HTTP 測試時加上 `COOKIE_SECURE=false`。
+- `MAIL_*`：登入是寄信給使用者，透過 [Mailgun](https://www.mailgun.com/) 寄送。
+- 一定要設 `DATABASE_FILENAME`，不然資料庫只存在記憶體裡，重啟就消失。也可以用 MySQL：`DATABASE_CLIENT=mysql`，再設 `DATABASE_HOST`、`DATABASE_PORT`、`DATABASE_DATABASE`、`DATABASE_USERNAME`、`DATABASE_PASSWORD`。
+
+## 開發
+
+需要 Node.js 26 與 pnpm 12（確切版本寫在 `package.json` 的 `packageManager`）。
+
+```shell
+pnpm install
+cp .env.example .env
+pnpm run build-dev
+pnpm start                  # http://localhost:3000/
+```
+
+- `pnpm run watch`：修改程式時自動重新建置，和 `pnpm start` 一起開。
+- `./packages/devenv/lib/initdb.ts`：建立資料表並印出範例帳號的登入連結，本機登入不必寄信。
+- `pnpm run compile`：TypeScript 型別檢查。
+- `env DATABASE_CLIENT=sqlite pnpm test`：用記憶體中的 SQLite 跑全部測試。
+- `pnpm run lint`、`pnpm run stylelint`：程式碼檢查。
+- `APP_URL=http://localhost:8788/ pnpm run build-static`：在本機產生靜態網站到 `build/static`。
+
+### 重新產生注音資料
+
+注音的詞庫、常用詞和書本資料由小麥注音的資料產生，產生結果已經放在 repo 裡。修改產生方式或書本內容（`packages/keybr-generators/books/zh-tw-baihua.txt`）後重新產生：
+
+```shell
+pnpm --filter @keybr/generators run generate-zhuyin
+pnpm --filter @keybr/generators run generate-languages
+```
+
+## 授權
+
+以 [GNU Affero General Public License v3.0](LICENSE) 釋出，和上游的 keybr.com 相同。注音資料來自小麥注音（MIT）與 libtabe（BSD），書本內容是維基文庫上的公有領域作品；完整的來源與授權聲明見 [NOTICE.md](NOTICE.md)。

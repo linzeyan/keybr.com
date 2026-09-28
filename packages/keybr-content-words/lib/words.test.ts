@@ -9,7 +9,12 @@ for (const language of Language.ALL) {
     isTrue(words.length > 1500);
     const unique = new Set();
     for (const word of words) {
-      if (!language.test(word)) {
+      // A Zhuyin word keeps the first tone spaces inside, like "ㄐㄧㄣ ㄊㄧㄢ".
+      const letters =
+        language.script === "bopomofo" && /^\S+( \S+)*$/u.test(word)
+          ? word.replaceAll(" ", "")
+          : word;
+      if (!language.test(letters)) {
         fail(`Extraneous word "${word}"`);
       }
       if (unique.has(word)) {

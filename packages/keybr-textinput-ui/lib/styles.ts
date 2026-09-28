@@ -23,6 +23,12 @@ export const textItemStyle = {
   whiteSpace: "nowrap",
 } satisfies CSSProperties;
 
+/** Leaves room above a glyph for its hint, even before one is displayed. */
+export const glyphItemStyle = {
+  ...textItemStyle,
+  marginBlockStart: "0.5em",
+} satisfies CSSProperties;
+
 const textStyles = {
   normal: {
     color: "var(--textinput__color)",
@@ -76,7 +82,8 @@ export function getTextStyle(
 ): CSSProperties | undefined {
   switch (attrs) {
     case Attr.Normal:
-    case Attr.Cursor: {
+    case Attr.Cursor:
+    case Attr.Cursor | Attr.Miss: {
       return (
         syntaxStyles[cls ?? ""] ??
         (special ? textStyles.special : textStyles.normal)

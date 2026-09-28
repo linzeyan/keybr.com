@@ -6,8 +6,8 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/config": "*",
-    "@keybr/settings": "*"
+    "@keybr/config": "workspace:*",
+    "@keybr/settings": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

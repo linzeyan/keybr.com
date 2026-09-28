@@ -111,7 +111,6 @@ export class PublicId {
       id: this.publicId,
       name: `Example User ${this.id}`,
       imageUrl: null,
-      premium: false,
     });
   }
 }

@@ -3,12 +3,12 @@ import { equal, isFalse, isTrue } from "rich-assert";
 import { Language } from "./language.ts";
 
 test("string manipulation", () => {
-  equal(Language.TR.upperCase(""), "");
-  equal(Language.TR.upperCase("AaIıİi"), "AAIIİİ");
-  equal(Language.TR.lowerCase(""), "");
-  equal(Language.TR.lowerCase("AaIıİi"), "aaııii");
-  equal(Language.TR.capitalCase(""), "");
-  equal(Language.TR.capitalCase("aaIıİi"), "Aaııii");
+  equal(Language.EN.upperCase(""), "");
+  equal(Language.EN.upperCase("aBc"), "ABC");
+  equal(Language.EN.lowerCase(""), "");
+  equal(Language.EN.lowerCase("aBc"), "abc");
+  equal(Language.EN.capitalCase(""), "");
+  equal(Language.EN.capitalCase("aBc"), "Abc");
 });
 
 test("check words", () => {
@@ -16,13 +16,12 @@ test("check words", () => {
   isTrue(Language.EN.test("ABCdef"));
   isFalse(Language.EN.test("AaIıİi"));
   isFalse(Language.EN.test("абвгде"));
+  isTrue(Language.ZH_TW.test("ㄊㄧㄢ"));
+  isFalse(Language.ZH_TW.test("abc"));
 });
 
 test("letter name", () => {
   equal(Language.EN.letterName(0x0069), "I");
-  equal(Language.TR.letterName(0x0069), "İ");
-  equal(Language.DE.letterName(0x00df), "ẞ");
-  equal(Language.HE.letterName(0x05d0), "\u05D0");
-  equal(Language.AR.letterName(0x0627), "\u200c\u0627");
-  equal(Language.FA.letterName(0x0627), "\u200c\u0627");
+  // Zhuyin has no letter case, a key shows the symbol as is.
+  equal(Language.ZH_TW.letterName(/* "ㄅ" */ 0x3105), "ㄅ");
 });

@@ -9,8 +9,8 @@
     "./lib/parser/parse-cldr.ts": "./lib/parser/parse-cldr-browser.ts"
   },
   "dependencies": {
-    "@keybr/keyboard": "*",
-    "@keybr/unicode": "*"
+    "@keybr/keyboard": "workspace:*",
+    "@keybr/unicode": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

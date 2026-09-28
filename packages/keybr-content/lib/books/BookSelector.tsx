@@ -3,9 +3,11 @@ import { type ReactNode } from "react";
 import { Book } from "./book.ts";
 
 export function BookSelector({
+  books = [...Book.ALL],
   book,
   onChange,
 }: {
+  readonly books?: readonly Book[];
   readonly book: Book;
   readonly onChange: (book: Book) => void;
 }): ReactNode {
@@ -15,7 +17,7 @@ export function BookSelector({
       <Field>
         <OptionList
           size={24}
-          options={Book.ALL.map(({ id, title }) => ({
+          options={books.map(({ id, title }) => ({
             value: id,
             name: title,
           }))}

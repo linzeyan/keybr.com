@@ -6,11 +6,11 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/debug": "*",
-    "@keybr/keyboard": "*",
-    "@keybr/pages-shared": "*",
-    "@keybr/phonetic-model": "*",
-    "@keybr/request": "*"
+    "@keybr/debug": "workspace:*",
+    "@keybr/keyboard": "workspace:*",
+    "@keybr/pages-shared": "workspace:*",
+    "@keybr/phonetic-model": "workspace:*",
+    "@keybr/request": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

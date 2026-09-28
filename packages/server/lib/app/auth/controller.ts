@@ -1,26 +1,14 @@
-import {
-  body,
-  controller,
-  http,
-  pathParam,
-  queryParam,
-} from "@fastr/controller";
+import { body, controller, http, pathParam } from "@fastr/controller";
 import { Context } from "@fastr/core";
-import {
-  ApplicationError,
-  BadRequestError,
-  ForbiddenError,
-} from "@fastr/errors";
+import { ApplicationError, ForbiddenError } from "@fastr/errors";
 import { inject, injectable } from "@fastr/invert";
 import { type RouterState } from "@fastr/middleware-router";
-import { randomString, type SessionState } from "@fastr/middleware-session";
+import { type SessionState } from "@fastr/middleware-session";
 import { User, UserLoginRequest } from "@keybr/database";
 import { Logger } from "@keybr/logger";
-import { type AbstractAdapter } from "@keybr/oauth";
 import { z } from "zod";
 import { Mailer } from "../mail/index.ts";
 import { messageWithLink } from "./email.ts";
-import { pAdapter } from "./pipe.ts";
 import { type AuthState } from "./types.ts";
 import { zod } from "./zod.ts";
 
@@ -49,40 +37,6 @@ export class Controller {
     @inject("canonicalUrl") readonly canonicalUrl: string,
     readonly mailer: Mailer,
   ) {}
-
-  @http.GET({ name: "oauth-init", path: "/auth/oauth-init/{adapter}" })
-  async oAuthInit(
-    ctx: Context<RouterState & SessionState & AuthState>,
-    @pathParam("adapter", pAdapter) adapter: AbstractAdapter,
-  ) {
-    const state = randomString(20);
-    ctx.state.session.start();
-    ctx.state.session.set("authState", state);
-    ctx.response.redirect(adapter.getAuthorizationUrl({ state }));
-  }
-
-  @http.GET({ name: "oauth-callback", path: "/auth/oauth-callback/{adapter}" })
-  async oAuthCallback(
-    ctx: Context<RouterState & SessionState & AuthState>,
-    @pathParam("adapter", pAdapter) adapter: AbstractAdapter,
-    @queryParam("code", zod(z.string().min(1))) code: string,
-    @queryParam("state", zod(z.string().min(1))) state: string,
-  ) {
-    const authState = ctx.state.session.pull("authState");
-    ctx.state.session.destroy();
-    if (state === authState) {
-      const token = await adapter.getAccessToken({ code });
-      const resourceOwner = await adapter.getProfile(token);
-      if (resourceOwner.email != null) {
-        const user = await User.ensure(resourceOwner);
-        ctx.state.session.start();
-        ctx.state.session.set("userId", user.id!);
-      }
-      ctx.response.redirect("/account");
-    } else {
-      throw new BadRequestError();
-    }
-  }
 
   @http.POST({ name: "create-token", path: "/auth/login/register-email" })
   async createToken(

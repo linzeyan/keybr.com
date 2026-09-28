@@ -64,16 +64,14 @@ export function resultFromJson(json: ResultJson): Result | null {
     e: errors,
     h: histogramJson,
   } = json;
-  if (
-    !(
-      isString(layoutId) &&
-      isString(textTypeId) &&
-      Number.isSafeInteger(timeStamp) &&
-      Number.isSafeInteger(length) &&
-      Number.isSafeInteger(time) &&
-      Number.isSafeInteger(errors)
-    )
-  ) {
+  if (!(
+    isString(layoutId) &&
+    isString(textTypeId) &&
+    Number.isSafeInteger(timeStamp) &&
+    Number.isSafeInteger(length) &&
+    Number.isSafeInteger(time) &&
+    Number.isSafeInteger(errors)
+  )) {
     return null;
   }
   const histogram = histogramFromJson(histogramJson);
@@ -102,9 +100,11 @@ export function histogramFromJson(json: HistogramtJson): Histogram | null {
   const samples = [];
   for (const [key, sample] of Object.entries(json)) {
     const codePoint = Number(key);
-    if (
-      !(Number.isSafeInteger(codePoint) && codePoint > 0 && codePoint <= 65535)
-    ) {
+    if (!(
+      Number.isSafeInteger(codePoint) &&
+      codePoint > 0 &&
+      codePoint <= 65535
+    )) {
       return null;
     }
     if (!isPlainObject(sample)) {
@@ -119,13 +119,11 @@ export function histogramFromJson(json: HistogramtJson): Histogram | null {
       readonly m: number;
       readonly t: number;
     };
-    if (
-      !(
-        Number.isSafeInteger(hitCount) &&
-        Number.isSafeInteger(missCount) &&
-        Number.isFinite(timeToType)
-      )
-    ) {
+    if (!(
+      Number.isSafeInteger(hitCount) &&
+      Number.isSafeInteger(missCount) &&
+      Number.isFinite(timeToType)
+    )) {
       return null;
     }
     samples.push({
@@ -141,24 +139,6 @@ export function histogramFromJson(json: HistogramtJson): Histogram | null {
 function fixLegacyLayoutId(id: string): string {
   // Fix layout identifiers that were changed in cfafe818d5edd3d72a738183730dae049b967ebc
   switch (id) {
-    case "be":
-      return Layout.BE_BY.id;
-    case "cz":
-      return Layout.CS_CZ.id;
-    case "de":
-      return Layout.DE_DE.id;
-    case "fr":
-      return Layout.FR_FR.id;
-    case "it":
-      return Layout.IT_IT.id;
-    case "pl":
-      return Layout.PL_PL.id;
-    case "ru":
-      return Layout.RU_RU.id;
-    case "se":
-      return Layout.SV_SE.id;
-    case "ua":
-      return Layout.UK_UA.id;
     case "uk":
       return Layout.EN_UK.id;
     case "us":

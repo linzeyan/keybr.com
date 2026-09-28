@@ -6,10 +6,10 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/config": "*",
-    "@keybr/publicid": "*",
-    "@keybr/result": "*",
-    "@keybr/result-io": "*"
+    "@keybr/config": "workspace:*",
+    "@keybr/publicid": "workspace:*",
+    "@keybr/result": "workspace:*",
+    "@keybr/result-io": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

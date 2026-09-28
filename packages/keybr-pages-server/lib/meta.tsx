@@ -6,9 +6,13 @@ import { useIntl } from "react-intl";
 
 export function Metas({ page }: { readonly page: PageInfo }): ReactNode {
   const { formatMessage } = useIntl();
+  const { base } = usePageData();
   return page.meta.map(({ name, property, content }, index) => {
     if (content != null && typeof content === "object") {
       content = formatMessage(content);
+    }
+    if (property === "og:url" || property === "og:image") {
+      content = String(new URL(content, base));
     }
     return (
       <meta key={index} name={name} property={property} content={content} />

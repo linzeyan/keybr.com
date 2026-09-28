@@ -6,12 +6,12 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/keyboard": "*",
-    "@keybr/lang": "*",
-    "@keybr/math": "*",
-    "@keybr/phonetic-model": "*",
-    "@keybr/settings": "*",
-    "@keybr/textinput": "*"
+    "@keybr/keyboard": "workspace:*",
+    "@keybr/lang": "workspace:*",
+    "@keybr/math": "workspace:*",
+    "@keybr/phonetic-model": "workspace:*",
+    "@keybr/settings": "workspace:*",
+    "@keybr/textinput": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

@@ -5,6 +5,7 @@ import {
   PageDataContext,
   Pages,
   Root,
+  usePageData,
 } from "@keybr/pages-shared";
 import { SettingsLoader } from "@keybr/settings-loader";
 import { querySelector } from "@keybr/widget";
@@ -23,14 +24,10 @@ export function main() {
 
 const AccountPage = lazy(() => import("./pages/account.tsx"));
 const HelpPage = lazy(() => import("./pages/help.tsx"));
-const HighScorePage = lazy(() => import("./pages/high-scores.tsx"));
 const LayoutsPage = lazy(() => import("./pages/layouts.tsx"));
-const MultiplayerPage = lazy(() => import("./pages/multiplayer.tsx"));
 const PracticePage = lazy(() => import("./pages/practice.tsx"));
 const ProfilePage = lazy(() => import("./pages/profile.tsx"));
 const TypingTestPage = lazy(() => import("./pages/typing-test.tsx"));
-const TermsOfServicePage = lazy(() => import("./pages/terms-of-service.tsx"));
-const PrivacyPolicyPage = lazy(() => import("./pages/privacy-policy.tsx"));
 
 export function App() {
   return (
@@ -50,6 +47,7 @@ export function App() {
 
 function PageRoutes() {
   const { locale } = useIntl();
+  const { staticSite } = usePageData();
   return (
     <BrowserRouter basename={Pages.intlBase(locale)}>
       <Routes>
@@ -65,17 +63,19 @@ function PageRoutes() {
             </Template>
           }
         />
-        <Route
-          path={Pages.account.path}
-          element={
-            <Template path={Pages.account.path}>
-              <Title page={Pages.account} />
-              <Suspense fallback={<LoadingProgress />}>
-                <AccountPage />
-              </Suspense>
-            </Template>
-          }
-        />
+        {!staticSite && (
+          <Route
+            path={Pages.account.path}
+            element={
+              <Template path={Pages.account.path}>
+                <Title page={Pages.account} />
+                <Suspense fallback={<LoadingProgress />}>
+                  <AccountPage />
+                </Suspense>
+              </Template>
+            }
+          />
+        )}
         <Route
           path={Pages.help.path}
           element={
@@ -88,34 +88,12 @@ function PageRoutes() {
           }
         />
         <Route
-          path={Pages.highScores.path}
-          element={
-            <Template path={Pages.highScores.path}>
-              <Title page={Pages.highScores} />
-              <Suspense fallback={<LoadingProgress />}>
-                <HighScorePage />
-              </Suspense>
-            </Template>
-          }
-        />
-        <Route
           path={Pages.layouts.path}
           element={
             <Template path={Pages.layouts.path}>
               <Title page={Pages.layouts} />
               <Suspense fallback={<LoadingProgress />}>
                 <LayoutsPage />
-              </Suspense>
-            </Template>
-          }
-        />
-        <Route
-          path={Pages.multiplayer.path}
-          element={
-            <Template path={Pages.multiplayer.path}>
-              <Title page={Pages.multiplayer} />
-              <Suspense fallback={<LoadingProgress />}>
-                <MultiplayerPage />
               </Suspense>
             </Template>
           }
@@ -149,28 +127,6 @@ function PageRoutes() {
               <Title page={Pages.typingTest} />
               <Suspense fallback={<LoadingProgress />}>
                 <TypingTestPage />
-              </Suspense>
-            </Template>
-          }
-        />
-        <Route
-          path={Pages.termsOfService.path}
-          element={
-            <Template path={Pages.termsOfService.path}>
-              <Title page={Pages.termsOfService} />
-              <Suspense fallback={<LoadingProgress />}>
-                <TermsOfServicePage />
-              </Suspense>
-            </Template>
-          }
-        />
-        <Route
-          path={Pages.privacyPolicy.path}
-          element={
-            <Template path={Pages.privacyPolicy.path}>
-              <Title page={Pages.privacyPolicy} />
-              <Suspense fallback={<LoadingProgress />}>
-                <PrivacyPolicyPage />
               </Suspense>
             </Template>
           }

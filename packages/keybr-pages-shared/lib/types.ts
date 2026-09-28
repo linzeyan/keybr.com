@@ -32,6 +32,11 @@ export type PageData = {
    * Serialized user settings.
    */
   readonly settings: unknown | null;
+  /**
+   * Whether the page was pre-rendered for static hosting. There is no server
+   * then, hence no accounts, and all user data stays in the browser storage.
+   */
+  readonly staticSite?: boolean;
 };
 
 export type UserDetails = {
@@ -51,64 +56,6 @@ export type UserDetails = {
    * Whether the user name is anonymized.
    */
   readonly anonymized: boolean;
-  /**
-   * Profiles from social networks.
-   */
-  readonly externalId: readonly UserExternalIdDetails[];
-  /**
-   * Premium account order.
-   */
-  readonly order: OrderDetails | null;
-  /**
-   * Timestamp.
-   */
-  readonly createdAt: string | Date;
-};
-
-export type UserExternalIdDetails = {
-  /**
-   * Social network name.
-   */
-  readonly provider: string;
-  /**
-   * User id in the social network.
-   */
-  readonly id: string;
-  /**
-   * User name in the social network.
-   */
-  readonly name: string | null;
-  /**
-   * Profile url.
-   */
-  readonly url: string | null;
-  /**
-   * Avatar image url.
-   */
-  readonly imageUrl: string | null;
-  /**
-   * Timestamp.
-   */
-  readonly createdAt: string | Date;
-};
-
-export type OrderDetails = {
-  /**
-   * Order unique id.
-   */
-  readonly id: string;
-  /**
-   * Order provider.
-   */
-  readonly provider: string;
-  /**
-   * Customer email.
-   */
-  readonly email: string | null;
-  /**
-   * Customer name.
-   */
-  readonly name: string | null;
   /**
    * Timestamp.
    */
@@ -143,10 +90,6 @@ export type NamedUser = {
    * Image url for avatar.
    */
   readonly imageUrl: string | null;
-  /**
-   * Whether this is a premium user;
-   */
-  readonly premium: boolean;
 };
 
 export type AnyUser = AnonymousUser | NamedUser;

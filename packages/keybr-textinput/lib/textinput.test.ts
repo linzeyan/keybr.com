@@ -109,28 +109,28 @@ test("accumulate and delete garbage", () => {
 
   equal(textInput.appendChar(100, X, 100), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "*x|[a]|b|c");
+  equal(showChars(textInput), "*x|[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
 
   equal(textInput.appendChar(200, A, 100), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "*x|*a|[a]|b|c");
+  equal(showChars(textInput), "*x|*a|[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
 
   equal(textInput.clearChar(), Feedback.Succeeded);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "*x|[a]|b|c");
+  equal(showChars(textInput), "*x|[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
 
   equal(textInput.clearChar(), Feedback.Succeeded);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "[a]|b|c");
+  equal(showChars(textInput), "[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
@@ -155,7 +155,7 @@ test("limit garbage length", () => {
   }
 
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "*x|*x|*x|*x|*x|*x|*x|*x|*x|*x|[a]|b|c");
+  equal(showChars(textInput), "*x|*x|*x|*x|*x|*x|*x|*x|*x|*x|[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
@@ -170,21 +170,21 @@ test("handle backspace at the start of a word", () => {
 
   equal(textInput.appendChar(100, X, 100), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "*x|[a]|b|c");
+  equal(showChars(textInput), "*x|[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
 
   equal(textInput.clearChar(), Feedback.Succeeded);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "[a]|b|c");
+  equal(showChars(textInput), "[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
 
   equal(textInput.clearChar(), Feedback.Succeeded);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "[a]|b|c");
+  equal(showChars(textInput), "[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
@@ -213,21 +213,21 @@ test("handle backspace in the middle of a word", () => {
 
   equal(textInput.appendChar(200, X, 100), Feedback.Failed);
   equal(showSteps(textInput), "a,100,101");
-  equal(showChars(textInput), "a|*x|[b]|c");
+  equal(showChars(textInput), "a|*x|[!b]|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 1);
   isFalse(textInput.completed);
 
   equal(textInput.clearChar(), Feedback.Succeeded);
   equal(showSteps(textInput), "a,100,101");
-  equal(showChars(textInput), "a|[b]|c");
+  equal(showChars(textInput), "a|[!b]|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 1);
   isFalse(textInput.completed);
 
   equal(textInput.clearChar(), Feedback.Succeeded);
   equal(showSteps(textInput), "a,100,101");
-  equal(showChars(textInput), "a|[b]|c");
+  equal(showChars(textInput), "a|[!b]|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 1);
   isFalse(textInput.completed);
@@ -255,7 +255,7 @@ test("forgive an inserted character", () => {
 
   equal(textInput.appendChar(100, X, 100), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "[a]|b|c");
+  equal(showChars(textInput), "[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
@@ -291,12 +291,12 @@ test("forgive a skipped character", () => {
 
   equal(textInput.appendChar(100, B, 101), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "[a]|b|c|d");
+  equal(showChars(textInput), "[!a]|b|c|d");
   isFalse(textInput.completed);
 
   equal(textInput.appendChar(200, C, 102), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "[a]|b|c|d");
+  equal(showChars(textInput), "[!a]|b|c|d");
   isFalse(textInput.completed);
 
   equal(textInput.appendChar(300, D, 103), Feedback.Recovered);
@@ -314,21 +314,21 @@ test("forgive a replaced character", () => {
 
   equal(textInput.appendChar(100, X, 101), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "[a]|b|c|d");
+  equal(showChars(textInput), "[!a]|b|c|d");
   equal(textInput.length, 4);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
 
   equal(textInput.appendChar(200, B, 102), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "[a]|b|c|d");
+  equal(showChars(textInput), "[!a]|b|c|d");
   equal(textInput.length, 4);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
 
   equal(textInput.appendChar(300, C, 103), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "[a]|b|c|d");
+  equal(showChars(textInput), "[!a]|b|c|d");
   equal(textInput.length, 4);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
@@ -387,21 +387,21 @@ test("space in garbage", () => {
   equal(textInput.appendChar(100, X, 100), Feedback.Failed);
   equal(textInput.appendChar(200, Space, 100), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "*x|* |[a]|b|c");
+  equal(showChars(textInput), "*x|* |[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
 
   equal(textInput.clearChar(), Feedback.Succeeded);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "*x|[a]|b|c");
+  equal(showChars(textInput), "*x|[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
 
   equal(textInput.clearChar(), Feedback.Succeeded);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "[a]|b|c");
+  equal(showChars(textInput), "[!a]|b|c");
   equal(textInput.length, 3);
   equal(textInput.pos, 0);
   isFalse(textInput.completed);
@@ -512,7 +512,7 @@ test("space skips words at the beginning of a text, remove garbage", () => {
 
   equal(textInput.appendChar(100, X, 101), Feedback.Failed);
   equal(showSteps(textInput), "");
-  equal(showChars(textInput), "*x|[a]|b|c");
+  equal(showChars(textInput), "*x|[!a]|b|c");
   equal(textInput.appendChar(200, Space, 102), Feedback.Recovered);
   equal(showSteps(textInput), "!a,200,0|!b,200,0|!c,200,0");
   equal(showChars(textInput), "!a|!b|!c");
@@ -531,7 +531,7 @@ test("space skips words in the middle of a word, remove garbage", () => {
   equal(textInput.appendChar(300, A, 103), Feedback.Succeeded);
   equal(textInput.appendChar(300, X, 104), Feedback.Failed);
   equal(showSteps(textInput), "x,100,101| ,200,102|a,300,103");
-  equal(showChars(textInput), "x| |a|*x|[b]|c");
+  equal(showChars(textInput), "x| |a|*x|[!b]|c");
   isFalse(textInput.completed);
 
   equal(textInput.appendChar(400, Space, 105), Feedback.Recovered);

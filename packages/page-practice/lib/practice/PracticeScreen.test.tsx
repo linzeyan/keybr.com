@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import { FakeIntlProvider } from "@keybr/intl";
+import { keyboardProps, Language } from "@keybr/keyboard";
 import { lessonProps, LessonType } from "@keybr/lesson";
 import { FakePhoneticModel } from "@keybr/phonetic-model";
 import { PhoneticModelLoader } from "@keybr/phonetic-model-loader";
@@ -16,8 +17,10 @@ test("render", async () => {
 
   const r = render(
     <FakeIntlProvider>
+      {/* The fake phonetic model knows only English letters. */}
       <FakeSettingsContext
         initialSettings={new Settings()
+          .set(keyboardProps.language, Language.EN)
           .set(lessonProps.type, LessonType.CUSTOM)
           .set(lessonProps.customText.content, "abcdefghij")}
       >

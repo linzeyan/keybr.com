@@ -1,5 +1,6 @@
 import { BookContentLoader } from "@keybr/content-books";
 import { WordListLoader } from "@keybr/content-words";
+import { useKeyboard } from "@keybr/keyboard";
 import { PhoneticModelLoader } from "@keybr/phonetic-model-loader";
 import { LCG } from "@keybr/rand";
 import { type ReactNode } from "react";
@@ -15,6 +16,7 @@ export function TextGeneratorLoader({
   children: (generator: TextGenerator) => ReactNode;
 }) {
   const { textSource } = useCompositeSettings();
+  const keyboard = useKeyboard();
   switch (textSource.type) {
     case TextSourceType.CommonWords:
       return (
@@ -34,7 +36,9 @@ export function TextGeneratorLoader({
       return (
         <BookContentLoader book={textSource.book}>
           {(bookContent) =>
-            children(new BookParagraphsGenerator(textSource, bookContent))
+            children(
+              new BookParagraphsGenerator(textSource, bookContent, keyboard),
+            )
           }
         </BookContentLoader>
       );

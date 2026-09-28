@@ -103,10 +103,7 @@ export class TextInput {
   }: {
     readonly timeStamp: number;
     readonly inputType:
-      | "appendChar"
-      | "appendLineBreak"
-      | "clearChar"
-      | "clearWord";
+      "appendChar" | "appendLineBreak" | "clearChar" | "clearWord";
     readonly codePoint: CodePoint;
     readonly timeToType: number;
   }): Feedback {
@@ -227,7 +224,10 @@ export class TextInput {
     }
     if (remaining.length > 0) {
       const [head, ...tail] = remaining;
-      chars.push({ ...head, attrs: Attr.Cursor }, ...tail);
+      // After a typo the char under cursor is already a miss, even if the
+      // typed garbage is not displayed.
+      const attrs = this.#typo ? Attr.Cursor | Attr.Miss : Attr.Cursor;
+      chars.push({ ...head, attrs }, ...tail);
     }
     const lines = { text, lines: [{ text, chars }] };
     this.#output = { chars, lines, remaining };

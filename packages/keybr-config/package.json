@@ -6,7 +6,7 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/logger": "*",
+    "@keybr/logger": "workspace:*",
     "mysql": "^2.18.1"
   },
   "devDependencies": {},

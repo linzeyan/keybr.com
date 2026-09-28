@@ -1,9 +1,11 @@
-import { describe, it } from "node:test";
+import { describe, it, test } from "node:test";
+import { Book } from "@keybr/content";
+import { Layout, loadKeyboard } from "@keybr/keyboard";
 import { FakeRNGStream } from "@keybr/rand";
 import { textDisplaySettings, textInputSettings } from "@keybr/textinput";
 import { type IInputEvent } from "@keybr/textinput-events";
-import { equal, like } from "rich-assert";
-import { CommonWordsGenerator } from "../generators/index.ts";
+import { deepEqual, equal, like } from "rich-assert";
+import { BookParagraphsGenerator, CommonWordsGenerator } from "../generators/index.ts";
 import { Session } from "./session.ts";
 import { DurationType } from "./types.ts";
 
@@ -53,4 +55,63 @@ describe("session", () => {
       { text: "four ", mark: { mark: 3 } },
     ]);
   });
+});
+
+test("fit zhuyin book lines to the width of their hanzi", () => {
+  const session = new Session(
+    {
+      duration: { type: DurationType.Length, value: 10 },
+      numLines: 3,
+      numCols: 10,
+      textInput: textInputSettings,
+      textDisplay: textDisplaySettings,
+    },
+    new BookParagraphsGenerator(
+      { paragraphIndex: 0 },
+      {
+        book: Book.ZH_TW_BAIHUA,
+        content: [["", ["今ㄐㄧㄣ 天ㄊㄧㄢ ，他ㄊㄚ 說ㄕㄨㄛ 。"]]],
+      },
+      loadKeyboard(Layout.ZH_TW_DACHEN),
+    ),
+  );
+
+  // "今天，他" takes 8 columns, its 11 keys would not fit in 10, and a line
+  // never starts with the "，" typed after the space of "天".
+  deepEqual(
+    session.getLines().lines.map(({ chars }) => chars.map(({ glyph }) => glyph).join("")),
+    ["今天，他", "說。今", "天，他"],
+  );
+});
+
+test("split a run of hanzi wider than a line between two of them", () => {
+  const session = new Session(
+    {
+      duration: { type: DurationType.Length, value: 10 },
+      numLines: 3,
+      numCols: 10,
+      textInput: textInputSettings,
+      textDisplay: textDisplaySettings,
+    },
+    new BookParagraphsGenerator(
+      { paragraphIndex: 0 },
+      {
+        book: Book.ZH_TW_BAIHUA,
+        content: [["", ["我ㄨㄛˇ們ㄇㄣ˙是ㄕˋ『好ㄏㄠˇ朋ㄆㄥˊ友ㄧㄡˇ』。"]]],
+      },
+      loadKeyboard(Layout.ZH_TW_DACHEN),
+    ),
+  );
+
+  // No first tone space to break at, so the line breaks before "朋", as
+  // "『" cannot end a line, and the keys go on without a space.
+  const { lines } = session.getLines();
+  deepEqual(
+    lines.map(({ chars }) => chars.map(({ glyph }) => glyph).join("")),
+    ["我們是『好", "朋友』。", "我們是『好"],
+  );
+  deepEqual(
+    lines.map(({ text }) => text),
+    ["我ㄨㄛˇ們ㄇㄣ˙是ㄕˋ『好ㄏㄠˇ", "朋ㄆㄥˊ友ㄧㄡˇ』。 ", "我ㄨㄛˇ們ㄇㄣ˙是ㄕˋ『好ㄏㄠˇ"],
+  );
 });

@@ -84,8 +84,8 @@ test("patch account", async () => {
       },
       publicUser: {
         id: "55vdtk1",
-        name: "externalName1",
-        imageUrl: "imageUrl1",
+        name: "user1",
+        imageUrl: null,
       },
     });
     like((await User.findById(user.id!))!.toJSON(), {

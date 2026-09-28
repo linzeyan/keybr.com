@@ -7,7 +7,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { Language } from "@keybr/keyboard";
-import { TransitionTableBuilder } from "@keybr/phonetic-model";
+import { TransitionTableBuilder, wordLength } from "@keybr/phonetic-model";
 import chalk from "chalk";
 import {
   fromCsv,
@@ -32,14 +32,20 @@ function generate(language: Language): void {
   if (dict != null) {
     console.log(`[${id}] ${dict.length} unique words`);
     const slice = sortByCount(language, dict).slice(0, 10000);
-    generateModel(slice);
-    generateWordList(slice.map(([word]) => word));
+    // The most common Zhuyin chunks are single first tone syllables,
+    // only the whole keystroke stream shows how a tone mark is followed
+    // by the next syllable.
+    generateModel(language.script === "bopomofo" ? dict : slice);
+    // The Zhuyin word list is made of real phrases by "generate-zhuyin.ts".
+    if (language.script !== "bopomofo") {
+      generateWordList(slice.map(([word]) => word));
+    }
   }
 
   function generateModel(dict: Word[]): void {
     const builder = new TransitionTableBuilder(4, [0x0020, ...alphabet]);
     for (const [word, count] of dict) {
-      if (word.length >= 3) {
+      if (word.length >= wordLength(language).min) {
         for (let i = 0; i < count; i++) {
           builder.append(language.lowerCase(word));
         }

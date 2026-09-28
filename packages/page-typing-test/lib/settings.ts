@@ -1,5 +1,6 @@
 import { Book } from "@keybr/content";
 import { Language } from "@keybr/keyboard";
+import { Enum } from "@keybr/lang";
 import {
   enumProp,
   itemProp,
@@ -51,18 +52,18 @@ export const typingTestProps = {
     TextSourceType,
     TextSourceType.CommonWords,
   ),
-  language: itemProp(
-    "typingTest.textSource.language",
-    Language.ALL,
-    Language.EN,
-  ),
   wordList: {
     wordListSize: numberProp("typingTest.wordList.wordListSize", 1000, {
       min: 10,
       max: 1000,
     }),
   } as const,
-  book: itemProp("typingTest.book", Book.ALL, Book.EN_ALICE_WONDERLAND),
+  // The typing test is in Zhuyin only, so are its books.
+  book: itemProp(
+    "typingTest.book",
+    new Enum(...Book.forLanguage(Language.ZH_TW)),
+    Book.ZH_TW_BAIHUA,
+  ),
   bookParagraphIndex: numberProp("typingTest.book.paragraphIndex", 0, {
     min: 0,
     max: 1000,
@@ -88,13 +89,13 @@ export function toTextSource(settings: Settings): TextSource {
     case TextSourceType.CommonWords:
       return {
         type: TextSourceType.CommonWords,
-        language: settings.get(typingTestProps.language),
+        language: Language.ZH_TW,
         wordListSize: settings.get(typingTestProps.wordList.wordListSize),
       };
     case TextSourceType.PseudoWords:
       return {
         type: TextSourceType.PseudoWords,
-        language: settings.get(typingTestProps.language),
+        language: Language.ZH_TW,
       };
     case TextSourceType.Book:
       return {

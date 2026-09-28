@@ -6,11 +6,11 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/binary": "*",
-    "@keybr/keyboard": "*",
-    "@keybr/lang": "*",
-    "@keybr/result": "*",
-    "@keybr/textinput": "*"
+    "@keybr/binary": "workspace:*",
+    "@keybr/keyboard": "workspace:*",
+    "@keybr/lang": "workspace:*",
+    "@keybr/result": "workspace:*",
+    "@keybr/textinput": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

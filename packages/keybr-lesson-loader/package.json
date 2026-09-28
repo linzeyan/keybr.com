@@ -6,15 +6,16 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/content-books": "*",
-    "@keybr/content-words": "*",
-    "@keybr/debug": "*",
-    "@keybr/keyboard": "*",
-    "@keybr/lesson": "*",
-    "@keybr/pages-shared": "*",
-    "@keybr/phonetic-model": "*",
-    "@keybr/phonetic-model-loader": "*",
-    "@keybr/settings": "*"
+    "@keybr/content": "workspace:*",
+    "@keybr/content-books": "workspace:*",
+    "@keybr/content-words": "workspace:*",
+    "@keybr/debug": "workspace:*",
+    "@keybr/keyboard": "workspace:*",
+    "@keybr/lesson": "workspace:*",
+    "@keybr/pages-shared": "workspace:*",
+    "@keybr/phonetic-model": "workspace:*",
+    "@keybr/phonetic-model-loader": "workspace:*",
+    "@keybr/settings": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+  - scripts
+
+patchedDependencies:
+  debug@4.4.3: patches/debug@4.4.3.patch
+  objection@3.1.5: patches/objection@3.1.5.patch

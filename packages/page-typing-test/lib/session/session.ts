@@ -2,6 +2,7 @@ import {
   type Feedback,
   splitStyledText,
   type Step,
+  type StyledText,
   TextInput,
 } from "@keybr/textinput";
 import {
@@ -42,6 +43,8 @@ export class Session {
   #steps!: Step[];
   /** Generates unique React element keys. */
   #index = 0;
+  /** The rest of a word split at the end of the last line. */
+  #rest: string | null = null;
 
   constructor(
     readonly settings: SessionSettings,
@@ -109,7 +112,7 @@ export class Session {
   #appendLine() {
     const mark = this.generator.mark();
     const text = this.#generateLine();
-    const chars = splitStyledText(text);
+    const chars = splitStyledText(this.#format(text));
     const index = (this.#index += 1);
     this.#lines.push({
       mark,
@@ -122,9 +125,13 @@ export class Session {
 
   #setActiveLine() {
     const { text } = this.#lines[this.#activeLine];
-    this.#textInput = new TextInput(text, this.settings.textInput, (step) => {
-      this.#steps.push(step);
-    });
+    this.#textInput = new TextInput(
+      this.#format(text),
+      this.settings.textInput,
+      (step) => {
+        this.#steps.push(step);
+      },
+    );
     this.#updateActiveLine();
   }
 
@@ -146,15 +153,66 @@ export class Session {
       generator,
     } = this;
     let line = "";
+    let width = 0;
     while (true) {
       const mark = generator.mark();
-      const word = generator.nextWord();
-      if (line.length > 0 && line.length + word.length + 1 > numCols) {
-        generator.reset(mark);
-        break;
+      const rest = this.#rest;
+      const word = rest ?? generator.nextWord();
+      this.#rest = null;
+      const wordWidth = this.#width(word);
+      if (width + wordWidth + 1 > numCols) {
+        // A run of Hanzi without a first tone may be wider than a line,
+        // it fills the rest of the line and goes on in the next one.
+        const split =
+          wordWidth + 1 > numCols ? this.#split(word, numCols - width) : 0;
+        if (split > 0) {
+          line += word.slice(0, split);
+          this.#rest = word.slice(split);
+          break;
+        }
+        if (width > 0) {
+          if (rest != null) {
+            this.#rest = rest;
+          } else {
+            generator.reset(mark);
+          }
+          break;
+        }
       }
       line += `${word} `;
+      width += wordWidth + 1;
     }
     return line;
+  }
+
+  /**
+   * Returns the longest part of a word that fits the given width, ending
+   * before a Hanzi, so a line neither starts with a closing punctuation nor
+   * ends with an opening one, or zero if nothing fits.
+   */
+  #split(word: string, width: number): number {
+    let split = 0;
+    for (const { index } of word.matchAll(
+      /(?<![\p{Ps}\p{Pi}])\p{Script=Han}/gu,
+    )) {
+      if (this.#width(word.slice(0, index)) > width) {
+        break;
+      }
+      split = index;
+    }
+    return split;
+  }
+
+  #format(words: string): StyledText {
+    return this.generator.format?.(words) ?? words;
+  }
+
+  #width(word: string): number {
+    let width = 0;
+    for (const { glyph } of splitStyledText(this.#format(word))) {
+      // A glyph like Hanzi is displayed in place of its keys, twice as wide.
+      width += glyph == null ? 1 : [...glyph].length * 2;
+    }
+    return width;
   }
 }

@@ -5,6 +5,7 @@ import {
   WhitespaceStyle,
 } from "@keybr/textinput";
 import { type CodePoint } from "@keybr/unicode";
+import { clsx } from "clsx";
 import { type ReactNode } from "react";
 import * as styles from "./chars.module.less";
 import { getTextStyle } from "./styles.ts";
@@ -31,8 +32,24 @@ export function renderChars(
     span = nextSpan;
   };
   for (let i = 0; i < chars.length; i++) {
-    const { codePoint, attrs, cls = null } = chars[i];
-    if (codePoint > 0x0020) {
+    const { codePoint, attrs, cls = null, glyph } = chars[i];
+    if (glyph != null) {
+      if (glyph !== "") {
+        pushSpan({ chars: [], attrs, cls });
+        const { attrs: glyphAttrs, hint } = glyphState(chars, i);
+        const glyphSpan = { attrs: glyphAttrs, cls };
+        nodes.push(
+          <span
+            key={nodes.length}
+            className={clsx(styles.glyph, getClassName(glyphSpan))}
+            style={getTextStyle(glyphSpan, /* special= */ false)}
+            data-hint={hint}
+          >
+            {glyph}
+          </span>,
+        );
+      }
+    } else if (codePoint > 0x0020) {
       if (span.attrs !== attrs || span.cls !== cls) {
         pushSpan({ chars: [], attrs, cls });
       }
@@ -52,6 +69,49 @@ export function renderChars(
   }
   pushSpan({ chars: [], attrs: 0, cls: null });
   return nodes;
+}
+
+/**
+ * Returns the state of a glyph from all of its chars, which may be
+ * interleaved with the garbage chars typed before the cursor. After a miss,
+ * the keys of a glyph like a Hanzi are its hint until it is typed, while a
+ * punctuation has none.
+ */
+function glyphState(
+  chars: readonly Char[],
+  start: number,
+): { readonly attrs: Attr; readonly hint?: string } {
+  const glyph = chars[start].glyph!;
+  let keys = "";
+  let cursor = false;
+  let hit = true;
+  let miss = false;
+  for (let i = start; i < chars.length; i++) {
+    const char = chars[i];
+    if (i > start && char.glyph !== "" && char.glyph != null) {
+      break;
+    }
+    if (char.glyph != null) {
+      keys += String.fromCodePoint(char.codePoint);
+      cursor ||= (char.attrs & Attr.Cursor) !== 0;
+      miss ||= (char.attrs & Attr.Miss) !== 0;
+      hit &&= (char.attrs & (Attr.Hit | Attr.Miss)) !== 0;
+    }
+  }
+  const hint = [...keys]
+    .filter((key) => !glyph.includes(key))
+    .join("")
+    .trim();
+  return {
+    attrs: cursor
+      ? Attr.Cursor
+      : miss
+        ? Attr.Miss
+        : hit
+          ? Attr.Hit
+          : Attr.Normal,
+    hint: cursor && miss && hint !== "" ? hint : undefined,
+  };
 }
 
 function specialChar(whitespaceStyle: WhitespaceStyle, codePoint: CodePoint) {
@@ -75,7 +135,7 @@ function specialChar(whitespaceStyle: WhitespaceStyle, codePoint: CodePoint) {
 }
 
 function getClassName({ attrs }: { readonly attrs: Attr }) {
-  return attrs === Attr.Cursor ? styles.cursor : undefined;
+  return attrs & Attr.Cursor ? styles.cursor : undefined;
 }
 
 const cursorSelector = `.${styles.cursor}`;

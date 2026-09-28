@@ -12,8 +12,8 @@ export class ConfigModule implements Module {
     bind("publicDir").toValue(
       Env.getPath("PUBLIC_DIR", "/opt/keybr/public"), //
     );
-    bind("canonicalUrl").toValue(
-      Env.getString("APP_URL", "https://www.keybr.com/"), //
-    );
+    // No default: the canonical handler redirects every request to this URL,
+    // so a wrong guess would send a self-hosted site's visitors elsewhere.
+    bind("canonicalUrl").toValue(Env.getString("APP_URL"));
   }
 }

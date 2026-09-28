@@ -12,21 +12,6 @@ import { KOREAN_103_FULL } from "./geometry/korean_103_full.ts";
 import { MATRIX } from "./geometry/matrix.ts";
 import { Keyboard } from "./keyboard.ts";
 import { Layout } from "./layout.ts";
-import { LAYOUT_AR_SA } from "./layout/ar_sa.ts";
-import { LAYOUT_AR_SA_102 } from "./layout/ar_sa_102.ts";
-import { LAYOUT_BE_BY } from "./layout/be_by.ts";
-import { LAYOUT_BR_CHWERTY_MATHS } from "./layout/br_chwerty_maths.ts";
-import { LAYOUT_CS_CZ } from "./layout/cs_cz.ts";
-import { LAYOUT_DA_DK } from "./layout/da_dk.ts";
-import { LAYOUT_DE_ADNW_BUT_XCV } from "./layout/de_adnw_but_xcv.ts";
-import { LAYOUT_DE_BONE } from "./layout/de_bone.ts";
-import { LAYOUT_DE_CH } from "./layout/de_ch.ts";
-import { LAYOUT_DE_CMOS } from "./layout/de_cmos.ts";
-import { LAYOUT_DE_DE } from "./layout/de_de.ts";
-import { LAYOUT_DE_MINE } from "./layout/de_mine.ts";
-import { LAYOUT_DE_NEO_2 } from "./layout/de_neo_2.ts";
-import { LAYOUT_DE_NOTED } from "./layout/de_noted.ts";
-import { LAYOUT_EL_GR } from "./layout/el_gr.ts";
 import { LAYOUT_EN_APTV3 } from "./layout/en_aptv3.ts";
 import { LAYOUT_EN_CANARY } from "./layout/en_canary.ts";
 import { LAYOUT_EN_CANARY_MATRIX } from "./layout/en_canary_matrix.ts";
@@ -64,71 +49,13 @@ import { LAYOUT_EN_STURDY } from "./layout/en_sturdy.ts";
 import { LAYOUT_EN_UK } from "./layout/en_uk.ts";
 import { LAYOUT_EN_US } from "./layout/en_us.ts";
 import { LAYOUT_EN_WORKMAN } from "./layout/en_workman.ts";
-import { LAYOUT_ES_DVORAK } from "./layout/es_dvorak.ts";
-import { LAYOUT_ES_ES } from "./layout/es_es.ts";
-import { LAYOUT_ES_LATAM_DVORAK } from "./layout/es_latam_dvorak.ts";
-import { LAYOUT_ES_MX } from "./layout/es_mx.ts";
-import { LAYOUT_ET_EE } from "./layout/et_ee.ts";
-import { LAYOUT_FA_IR } from "./layout/fa_ir.ts";
-import { LAYOUT_FA_IR_LEGACY } from "./layout/fa_ir_legacy.ts";
-import { LAYOUT_FI_FI } from "./layout/fi_fi.ts";
-import { LAYOUT_FR_BEPO } from "./layout/fr_bepo.ts";
-import { LAYOUT_FR_CA } from "./layout/fr_ca.ts";
-import { LAYOUT_FR_CH } from "./layout/fr_ch.ts";
-import { LAYOUT_FR_ERGLACE } from "./layout/fr_erglace.ts";
-import { LAYOUT_FR_ERGO_L } from "./layout/fr_ergo_l.ts";
-import { LAYOUT_FR_ERGOPTI } from "./layout/fr_ergopti.ts";
-import { LAYOUT_FR_FR } from "./layout/fr_fr.ts";
-import { LAYOUT_FR_OPTIMOT_ERGO } from "./layout/fr_optimot_ergo.ts";
-import { LAYOUT_HE_IL } from "./layout/he_il.ts";
-import { LAYOUT_HE_IL_ARKN } from "./layout/he_il_arkn.ts";
-import { LAYOUT_HU_HU } from "./layout/hu_hu.ts";
-import { LAYOUT_IT_IT } from "./layout/it_it.ts";
-import { LAYOUT_JA_JP } from "./layout/ja_jp.ts";
 import { LAYOUT_JA_JP_JIS } from "./layout/ja_jp_jis.ts";
-import { LAYOUT_LT_LT } from "./layout/lt_lt.ts";
-import { LAYOUT_LV_LV } from "./layout/lv_lv.ts";
-import { LAYOUT_NB_DVORAK } from "./layout/nb_dvorak.ts";
-import { LAYOUT_NB_KVIKK } from "./layout/nb_kvikk.ts";
-import { LAYOUT_NB_NO } from "./layout/nb_no.ts";
-import { LAYOUT_NB_SKARP } from "./layout/nb_skarp.ts";
-import { LAYOUT_NL_BE } from "./layout/nl_be.ts";
-import { LAYOUT_NL_NL } from "./layout/nl_nl.ts";
-import { LAYOUT_PL_FWYR } from "./layout/pl_fwyr.ts";
-import { LAYOUT_PL_PL } from "./layout/pl_pl.ts";
-import { LAYOUT_PT_BR } from "./layout/pt_br.ts";
-import { LAYOUT_PT_PT } from "./layout/pt_pt.ts";
-import { LAYOUT_RO_RO } from "./layout/ro_ro.ts";
-import { LAYOUT_RU_RU } from "./layout/ru_ru.ts";
-import { LAYOUT_RU_STATICA_3X5 } from "./layout/ru_statica_3x5.ts";
-import { LAYOUT_SL_SI } from "./layout/sl_si.ts";
-import { LAYOUT_SV_SE } from "./layout/sv_se.ts";
-import { LAYOUT_TH_TH } from "./layout/th_th.ts";
-import { LAYOUT_TH_TH_MAN } from "./layout/th_th_man.ts";
-import { LAYOUT_TH_TH_PAT } from "./layout/th_th_pat.ts";
-import { LAYOUT_TR_TR_F } from "./layout/tr_tr_f.ts";
-import { LAYOUT_TR_TR_Q } from "./layout/tr_tr_q.ts";
-import { LAYOUT_UK_UA } from "./layout/uk_ua.ts";
+import { LAYOUT_ZH_TW_DACHEN } from "./layout/zh_tw_dachen.ts";
 import { nullMod, remapZones } from "./mod.ts";
 import { KeyboardOptions } from "./settings.ts";
 import { type CharacterDict, type GeometryDict } from "./types.ts";
 
 const layouts = new Map<Layout, CharacterDict>([
-  [Layout.AR_SA, LAYOUT_AR_SA],
-  [Layout.AR_SA_102, LAYOUT_AR_SA_102],
-  [Layout.BE_BY, LAYOUT_BE_BY],
-  [Layout.BR_CHWERTY_MATHS, LAYOUT_BR_CHWERTY_MATHS],
-  [Layout.CS_CZ, LAYOUT_CS_CZ],
-  [Layout.DA_DK, LAYOUT_DA_DK],
-  [Layout.DE_ADNW_BUT_XCV, LAYOUT_DE_ADNW_BUT_XCV],
-  [Layout.DE_BONE, LAYOUT_DE_BONE],
-  [Layout.DE_CH, LAYOUT_DE_CH],
-  [Layout.DE_CMOS, LAYOUT_DE_CMOS],
-  [Layout.DE_DE, LAYOUT_DE_DE],
-  [Layout.DE_MINE, LAYOUT_DE_MINE],
-  [Layout.DE_NEO_2, LAYOUT_DE_NEO_2],
-  [Layout.DE_NOTED, LAYOUT_DE_NOTED],
-  [Layout.EL_GR, LAYOUT_EL_GR],
   [Layout.EN_APT_V3, LAYOUT_EN_APTV3],
   [Layout.EN_CANARY, LAYOUT_EN_CANARY],
   [Layout.EN_CANARY_MATRIX, LAYOUT_EN_CANARY_MATRIX],
@@ -170,50 +97,7 @@ const layouts = new Map<Layout, CharacterDict>([
   [Layout.EN_UK, LAYOUT_EN_UK],
   [Layout.EN_US, LAYOUT_EN_US],
   [Layout.EN_WORKMAN, LAYOUT_EN_WORKMAN],
-  [Layout.ES_DVORAK, LAYOUT_ES_DVORAK],
-  [Layout.ES_ES, LAYOUT_ES_ES],
-  [Layout.ES_LATAM_DVORAK, LAYOUT_ES_LATAM_DVORAK],
-  [Layout.ES_MX, LAYOUT_ES_MX],
-  [Layout.ET_EE, LAYOUT_ET_EE],
-  [Layout.FA_IR, LAYOUT_FA_IR],
-  [Layout.FA_IR_LEGACY, LAYOUT_FA_IR_LEGACY],
-  [Layout.FI_FI, LAYOUT_FI_FI],
-  [Layout.FR_BEPO, LAYOUT_FR_BEPO],
-  [Layout.FR_CA, LAYOUT_FR_CA],
-  [Layout.FR_CH, LAYOUT_FR_CH],
-  [Layout.FR_ERGLACE, LAYOUT_FR_ERGLACE],
-  [Layout.FR_ERGO_L, LAYOUT_FR_ERGO_L],
-  [Layout.FR_ERGOPTI, LAYOUT_FR_ERGOPTI],
-  [Layout.FR_FR, LAYOUT_FR_FR],
-  [Layout.FR_OPTIMOT_ERGO, LAYOUT_FR_OPTIMOT_ERGO],
-  [Layout.HE_IL, LAYOUT_HE_IL],
-  [Layout.HE_IL_ARKN, LAYOUT_HE_IL_ARKN],
-  [Layout.HU_HU, LAYOUT_HU_HU],
-  [Layout.IT_IT, LAYOUT_IT_IT],
-  [Layout.JA_JP, LAYOUT_JA_JP],
-  [Layout.LT_LT, LAYOUT_LT_LT],
-  [Layout.LV_LV, LAYOUT_LV_LV],
-  [Layout.NB_DVORAK, LAYOUT_NB_DVORAK],
-  [Layout.NB_KVIKK, LAYOUT_NB_KVIKK],
-  [Layout.NB_NO, LAYOUT_NB_NO],
-  [Layout.NB_SKARP, LAYOUT_NB_SKARP],
-  [Layout.NL_BE, LAYOUT_NL_BE],
-  [Layout.NL_NL, LAYOUT_NL_NL],
-  [Layout.PL_FWYR, LAYOUT_PL_FWYR],
-  [Layout.PL_PL, LAYOUT_PL_PL],
-  [Layout.PT_BR, LAYOUT_PT_BR],
-  [Layout.PT_PT, LAYOUT_PT_PT],
-  [Layout.RO_RO, LAYOUT_RO_RO],
-  [Layout.RU_RU, LAYOUT_RU_RU],
-  [Layout.RU_STATICA_3X5, LAYOUT_RU_STATICA_3X5],
-  [Layout.SL_SI, LAYOUT_SL_SI],
-  [Layout.SV_SE, LAYOUT_SV_SE],
-  [Layout.TH_MAN, LAYOUT_TH_TH_MAN],
-  [Layout.TH_PAT, LAYOUT_TH_TH_PAT],
-  [Layout.TH_TH, LAYOUT_TH_TH],
-  [Layout.TR_TR_F, LAYOUT_TR_TR_F],
-  [Layout.TR_TR_Q, LAYOUT_TR_TR_Q],
-  [Layout.UK_UA, LAYOUT_UK_UA],
+  [Layout.ZH_TW_DACHEN, LAYOUT_ZH_TW_DACHEN],
 ]);
 
 const geometries = new Map<Geometry, GeometryDict>([

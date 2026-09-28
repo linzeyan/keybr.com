@@ -45,14 +45,14 @@ test("letter labels", () => {
       h: 1,
     },
     [
-      /* LATIN SMALL LETTER DOTLESS I */ 0x0131, //
-      /* LATIN CAPITAL LETTER I */ 0x0049,
-      /* LATIN SMALL LETTER I */ 0x0069,
-      /* LATIN CAPITAL LETTER I WITH DOT ABOVE */ 0x0130,
+      /* LATIN SMALL LETTER A */ 0x0061, //
+      /* LATIN CAPITAL LETTER A */ 0x0041,
+      /* BOPOMOFO LETTER EH */ 0x311d,
+      /* FULLWIDTH COMMA */ 0xff0c,
     ],
   );
 
-  const Key = makeKeyComponent(Language.TR, shape);
+  const Key = makeKeyComponent(Language.EN, shape);
 
   // Act.
 
@@ -60,7 +60,9 @@ test("letter labels", () => {
 
   // Assert.
 
-  equal(r.container.textContent, "Iİ");
+  // A letter shows once for its case pair, a Zhuyin symbol and its
+  // punctuation have no case and show both.
+  equal(r.container.textContent, "ㄝ，A");
   equal(r.container.querySelectorAll('[data-key="my-key"]').length, 1);
 
   r.unmount();
@@ -85,7 +87,7 @@ test("dead labels", () => {
     ],
   );
 
-  const Key = makeKeyComponent(Language.DE, shape);
+  const Key = makeKeyComponent(Language.EN, shape);
 
   // Act.
 
@@ -118,7 +120,7 @@ test("ligature labels", () => {
     ],
   );
 
-  const Key = makeKeyComponent(Language.DE, shape);
+  const Key = makeKeyComponent(Language.EN, shape);
 
   // Act.
 
@@ -151,7 +153,7 @@ test("mixed labels", () => {
     ],
   );
 
-  const Key = makeKeyComponent(Language.DE, shape);
+  const Key = makeKeyComponent(Language.EN, shape);
 
   // Act.
 

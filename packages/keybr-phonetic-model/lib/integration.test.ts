@@ -11,8 +11,10 @@ for (const language of Language.ALL) {
     const letters = Letter.frequencyOrder(model.letters);
     const { chain } = table;
 
-    const alphabet = /^\u{0020}[\p{Letter}\p{Mark}'’]+$/u;
-    const word = /^[\p{Letter}\p{Mark}'’]+$/u;
+    // The Bopomofo neutral tone mark "˙" is a letter to us, but it is
+    // a modifier symbol in Unicode.
+    const alphabet = /^\u{0020}[\p{Letter}\p{Mark}'’˙]+$/u;
+    const word = /^[\p{Letter}\p{Mark}'’˙]+$/u;
 
     // Check the model settings.
     match(String.fromCodePoint(...table.alphabet), alphabet);

@@ -1,12 +1,16 @@
 import { clsx } from "clsx";
 import { memo, type ReactNode } from "react";
+import { type Book } from "./book.ts";
 import * as styles from "./ParagraphPreview.module.less";
+import { displayText } from "./util.ts";
 
 export const ParagraphPreview = memo(function ParagraphPreview({
+  book,
   paragraphs,
   paragraphIndex,
   around = 2,
 }: {
+  readonly book: Book;
   readonly paragraphs: readonly string[];
   readonly paragraphIndex: number;
   readonly around?: number;
@@ -33,7 +37,7 @@ export const ParagraphPreview = memo(function ParagraphPreview({
           <span className={styles.separator}>
             {index === paragraphIndex ? "\u27A4" : " "}
           </span>
-          <ParagraphContent paragraph={paragraph} />
+          <ParagraphContent paragraph={displayText(book, paragraph)} />
         </div>
       ))}
     </div>

@@ -1,3 +1,4 @@
+import { Book } from "@keybr/content";
 import { loadContent } from "@keybr/content-books";
 import { loadWordList } from "@keybr/content-words";
 import { catchError } from "@keybr/debug";
@@ -84,7 +85,11 @@ function useLoader(model: PhoneticModel): Lesson | null {
           break;
         }
         case LessonType.BOOKS: {
-          const book = settings.get(lessonProps.books.book);
+          const { language } = KeyboardOptions.from(settings);
+          const books = Book.forLanguage(language);
+          const selected = settings.get(lessonProps.books.book);
+          // The default book is in English, which the Zhuyin layout cannot type.
+          const book = books.includes(selected) ? selected : books[0];
           const content = await loadContent(book);
           if (!didCancel) {
             setResult(

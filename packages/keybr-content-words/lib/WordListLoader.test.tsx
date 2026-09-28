@@ -19,19 +19,19 @@ test("load word list", async () => {
 
   await r.findByText("english");
   includes(res, "mother");
-  doesNotInclude(res, "madre");
+  doesNotInclude(res, "ㄐㄧㄣ ㄊㄧㄢ");
 
   r.rerender(
-    <WordListLoader language={Language.ES} fallback="fallback">
+    <WordListLoader language={Language.ZH_TW} fallback="fallback">
       {(result) => {
         res = result;
-        return <div>spanish</div>;
+        return <div>zhuyin</div>;
       }}
     </WordListLoader>,
   );
 
-  await r.findByText("spanish");
-  includes(res, "madre");
+  await r.findByText("zhuyin");
+  includes(res, "ㄐㄧㄣ ㄊㄧㄢ");
   doesNotInclude(res, "mother");
 
   r.unmount();

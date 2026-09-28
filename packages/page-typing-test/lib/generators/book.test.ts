@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import { Book } from "@keybr/content";
+import { Layout, loadKeyboard } from "@keybr/keyboard";
 import { equal } from "rich-assert";
 import { BookParagraphsGenerator } from "./book.ts";
 
@@ -15,6 +16,7 @@ test("generate words", () => {
         ["Chapter II", ["four five six"]],
       ],
     },
+    loadKeyboard(Layout.EN_US),
   );
 
   const mark0 = generator.mark();

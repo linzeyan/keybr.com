@@ -5,15 +5,15 @@ import { getBlacklist } from "./blacklist.ts";
 
 test("forbid blacklisted words", () => {
   const en = getBlacklist(Language.EN);
-  const be = getBlacklist(Language.BE);
+  const zh = getBlacklist(Language.ZH_TW);
 
   isTrue(en.allow("LOVE"));
   isTrue(en.allow("love"));
   isFalse(en.allow("FUCK"));
   isFalse(en.allow("fuck"));
 
-  isTrue(be.allow("LOVE"));
-  isTrue(be.allow("love"));
-  isTrue(be.allow("FUCK"));
-  isTrue(be.allow("fuck"));
+  isTrue(zh.allow("LOVE"));
+  isTrue(zh.allow("love"));
+  isTrue(zh.allow("FUCK"));
+  isTrue(zh.allow("fuck"));
 });

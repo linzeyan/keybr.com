@@ -3,9 +3,11 @@ import { Application } from "@fastr/core";
 import { Container } from "@fastr/invert";
 import { Manifest } from "@keybr/assets";
 import { ConfigModule, Env } from "@keybr/config";
+import { createSchema } from "@keybr/database";
 import { Logger } from "@keybr/logger";
-import { Game } from "@keybr/multiplayer-server";
-import { ApplicationModule, kGame, kMain } from "./app/index.ts";
+import Knex from "knex";
+import { ApplicationModule, kMain } from "./app/index.ts";
+import { Mailer } from "./app/mail/index.ts";
 import { ServerModule } from "./server/module.ts";
 import { Service } from "./server/service.ts";
 
@@ -21,12 +23,19 @@ if (cluster.isPrimary) {
     publicDir: container.get("publicDir"),
     canonicalUrl: container.get("canonicalUrl"),
   });
+  // These read their settings lazily, on the first request or the first mail.
+  // Read them now, so that a missing setting stops the server right away.
+  container.get("sessionOptions");
+  container.get(Mailer);
   process.title = "keybr master process";
-  fork({ args: ["http"] });
-  fork({ args: ["http"] });
-  fork({ args: ["http"] });
-  fork({ args: ["http"] });
-  fork({ args: ["ws"] });
+  // Once here rather than per worker, so the workers never race to create
+  // the same tables. A failure exits through the unhandled rejection handler.
+  createSchema(container.get(Knex)).then(() => {
+    fork({ args: ["http"] });
+    fork({ args: ["http"] });
+    fork({ args: ["http"] });
+    fork({ args: ["http"] });
+  });
 } else {
   const container = makeContainer();
   const service = container.get(Service);
@@ -37,14 +46,6 @@ if (cluster.isPrimary) {
         app: container.get(Application, kMain),
         port: Env.getPort("SERVER_PORT", 3000),
       });
-      break;
-    case "ws":
-      process.title = "keybr game server worker process";
-      service.start({
-        app: container.get(Application, kGame),
-        port: Env.getPort("SERVER_PORT_WS", 3001),
-      });
-      container.get(Game).start();
       break;
   }
 }

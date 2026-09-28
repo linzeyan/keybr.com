@@ -6,12 +6,11 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/assets": "*",
-    "@keybr/intl": "*",
-    "@keybr/pages-shared": "*",
-    "@keybr/themes": "*",
-    "@keybr/thirdparties": "*",
-    "@keybr/widget": "*"
+    "@keybr/assets": "workspace:*",
+    "@keybr/intl": "workspace:*",
+    "@keybr/pages-shared": "workspace:*",
+    "@keybr/themes": "workspace:*",
+    "@keybr/widget": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

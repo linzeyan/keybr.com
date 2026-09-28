@@ -1,5 +1,3 @@
-import { createContext, useContext } from "react";
-
 /*
  * Locale identifier is a triple "language[-script][-region]".
  *
@@ -23,47 +21,7 @@ export type LocaleId = string;
 
 export const defaultLocale: LocaleId = "en";
 
-export const allLocales: readonly LocaleId[] = [
-  defaultLocale,
-  "af",
-  "ar",
-  "bg",
-  "ca",
-  "cs",
-  "da",
-  "de",
-  "el",
-  "eo",
-  "es",
-  "et",
-  "fa",
-  "fi",
-  "fr",
-  "ga",
-  "he",
-  "hr",
-  "hu",
-  "id",
-  "it",
-  "ja",
-  "ko",
-  "ne",
-  "nl",
-  "pl",
-  "pt-br",
-  "pt-pt",
-  "ro",
-  "ru",
-  "sk",
-  "sv",
-  "th",
-  "tr",
-  "uk",
-  "vi",
-  "zh-hans",
-  "zh-hant",
-  "zh-tw",
-];
+export const allLocales: readonly LocaleId[] = [defaultLocale, "zh-tw"];
 
 export function getDir(locale: LocaleId): "ltr" | "rtl" {
   switch (locale) {
@@ -74,28 +32,4 @@ export function getDir(locale: LocaleId): "ltr" | "rtl" {
     default:
       return "ltr";
   }
-}
-
-export const PreferredLocaleContext = createContext<LocaleId>(defaultLocale);
-
-export function usePreferredLocale(): LocaleId {
-  return useContext(PreferredLocaleContext);
-}
-
-const map = (() => {
-  const tmp = new Map<string, LocaleId>();
-  for (const id of allLocales) {
-    const { language, region } = new Intl.Locale(id).maximize();
-    tmp.set(language + "-" + region, id);
-    if (!tmp.has(language)) {
-      tmp.set(language, id);
-    }
-  }
-  return tmp;
-})();
-
-export function selectLocale(
-  filter: (...locales: readonly string[]) => string | null,
-): LocaleId {
-  return map.get(filter(...map.keys()) ?? "") ?? defaultLocale;
 }

@@ -142,6 +142,17 @@ test("filter words", () => {
   deepEqual(lesson.wordList, ["abc", "def"]);
 });
 
+test("keep zhuyin words with first tone spaces inside", () => {
+  const settings = new Settings();
+  const keyboard = loadKeyboard(Layout.ZH_TW_DACHEN);
+  const model = new FakePhoneticModel();
+  // "今天" is typed with a space after the first tone syllable "ㄐㄧㄣ".
+  const wordList = ["ㄐㄧㄣ ㄊㄧㄢ", "ㄋㄧˇㄏㄠˇ", "abc"];
+  const lesson = new WordListLesson(settings, keyboard, model, wordList);
+
+  deepEqual(lesson.wordList, ["ㄐㄧㄣ ㄊㄧㄢ", "ㄋㄧˇㄏㄠˇ"]);
+});
+
 describe("generate randomized text using settings", () => {
   const keyboard = loadKeyboard(Layout.EN_US);
 

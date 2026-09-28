@@ -10,6 +10,7 @@ function getPublicDir() {
   return resolve(import.meta.dirname, "..", "..", "..", "root", "public");
 }
 
+process.env.APP_URL ??= "https://www.keybr.com/";
 process.env.DATA_DIR ??= getDataDir();
 process.env.PUBLIC_DIR ??= getPublicDir();
 
@@ -24,12 +25,3 @@ process.env.DATABASE_FILENAME ??= ":memory:";
 process.env.COOKIE_DOMAIN = "";
 process.env.COOKIE_PATH = "/";
 process.env.COOKIE_SECURE = "false";
-
-process.env.AUTH_GOOGLE_CLIENT_ID = "id";
-process.env.AUTH_GOOGLE_CLIENT_SECRET = "secret";
-
-process.env.AUTH_FACEBOOK_CLIENT_ID = "id";
-process.env.AUTH_FACEBOOK_CLIENT_SECRET = "secret";
-
-process.env.PADDLE_API_KEY = "apiKey";
-process.env.PADDLE_SECRET_KEY = "secretKey";

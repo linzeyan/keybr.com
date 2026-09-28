@@ -21,8 +21,7 @@ test("get profile", async () => {
   equal(response.status, 200);
   deepEqual(await response.body.json(), {
     id: "55vdtk1",
-    imageUrl: "imageUrl1",
-    name: "externalName1",
-    premium: false,
+    imageUrl: null,
+    name: "user1",
   });
 });

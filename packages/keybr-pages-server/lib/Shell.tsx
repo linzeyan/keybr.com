@@ -2,7 +2,6 @@ import { type IncomingHeaders } from "@fastr/headers";
 import { FavIconAssets, ScriptAssets, StylesheetAssets } from "@keybr/assets";
 import { getDir } from "@keybr/intl";
 import {
-  isPremiumUser,
   LoadingProgress,
   PageDataScript,
   type PageInfo,
@@ -10,12 +9,7 @@ import {
   Root,
   usePageData,
 } from "@keybr/pages-shared";
-import { ThemePrefs, useTheme } from "@keybr/themes";
-import {
-  CloudflareAnalytics,
-  GoogleTagManager,
-  SetupAds,
-} from "@keybr/thirdparties";
+import { COLORS, FONTS, ThemePrefs, useTheme } from "@keybr/themes";
 import { type ReactNode } from "react";
 import { useIntl } from "react-intl";
 import { isBot } from "./bot.ts";
@@ -28,20 +22,9 @@ export function Shell({
   readonly page: PageInfo;
   readonly headers: IncomingHeaders;
 }) {
-  const { publicUser } = usePageData();
   return (
     <Html>
-      <Head page={page}>
-        {isPremiumUser(publicUser) || (
-          <>
-            <CloudflareAnalytics />
-            <GoogleTagManager />
-            <SetupAds>
-              <ScriptAssets entrypoint="ads" />
-            </SetupAds>
-          </>
-        )}
-      </Head>
+      <Head page={page} />
       <Body>
         {isBot(headers) ? <Content page={page} /> : <LoadingProgress />}
       </Body>
@@ -72,9 +55,11 @@ function Head({
   readonly children?: ReactNode;
 }) {
   const { formatMessage } = useIntl();
+  const { staticSite } = usePageData();
   return (
     <head>
       <meta charSet="UTF-8" />
+      {staticSite && <ThemeScript />}
       <title>{formatMessage(page.title)}</title>
       <StylesheetAssets entrypoint="browser" />
       <FavIconAssets links={favIcons} />
@@ -86,6 +71,28 @@ function Head({
       {children}
     </head>
   );
+}
+
+/**
+ * The server renders the stored theme into the page, the browser app never
+ * applies it on start. With no server, apply it before the first paint.
+ * Unknown ids keep the default, like in `ThemePrefs`.
+ */
+function ThemeScript() {
+  const ids = (list: Iterable<{ readonly id: string }>) =>
+    JSON.stringify(Array.from(list, ({ id }) => id));
+  const script =
+    `try{` +
+    `var m=document.cookie.match(/(?:^|; )${ThemePrefs.cookieKey}=([^;]*)/);` +
+    `if(m){` +
+    `var p=JSON.parse(decodeURIComponent(m[1])),e=document.documentElement;` +
+    `if(${ids(COLORS)}.indexOf(p.color)>=0)` +
+    `e.setAttribute("${ThemePrefs.colorAttrName}",p.color);` +
+    `if(${ids(FONTS)}.indexOf(p.font)>=0)` +
+    `e.setAttribute("${ThemePrefs.fontAttrName}",p.font);` +
+    `}` +
+    `}catch(e){}`;
+  return <script dangerouslySetInnerHTML={{ __html: script }} />;
 }
 
 function Body({ children }: { readonly children?: ReactNode }) {
@@ -108,7 +115,6 @@ function Content({ page }: { readonly page: PageInfo }) {
             Pages.practice,
             Pages.profile,
             Pages.typingTest,
-            Pages.multiplayer,
             Pages.layouts,
             Pages.help,
           ].map(({ path, link }, index) => (

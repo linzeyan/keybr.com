@@ -1,8 +1,5 @@
-/* eslint-disable n/no-extraneous-import */
-
 import { join } from "node:path";
 import { intlTransformer } from "@keybr/scripts/intl-transformer.js";
-import { ENV } from "@keybr/thirdparties/webpack-env.js";
 import CompressionPlugin from "compression-webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
@@ -12,8 +9,6 @@ import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { ManifestPlugin } from "./webpack-manifest.js";
 
 const mode = process.env.NODE_ENV || "production";
-
-console.log("webpack build time environment", ENV);
 
 const isVendor = (excludedVendors) => {
   const vendorsDir = join(import.meta.dirname, "node_modules");
@@ -107,6 +102,7 @@ export default [
     entry: {
       index: "./packages/server/lib/main.ts",
       keybr: "./packages/server-cli/lib/main.ts",
+      static: "./packages/keybr-pages-server/lib/static.tsx",
     },
     output: {
       path: join(import.meta.dirname, "root", "lib"),
@@ -136,9 +132,7 @@ export default [
       ],
     },
     externals: {
-      "sqlite3": "commonjs sqlite3",
-      "bufferutil": "commonjs bufferutil",
-      "utf-8-validate": "commonjs utf-8-validate",
+      sqlite3: "commonjs sqlite3",
     },
     optimization: {
       minimize: false,
@@ -148,7 +142,6 @@ export default [
     devtool: "source-map",
     plugins: [
       new webpack.DefinePlugin({
-        ...ENV,
         "typeof window": JSON.stringify("undefined"),
       }),
       new MiniCssExtractPlugin(),
@@ -162,7 +155,6 @@ export default [
     entry: {
       browser: "./packages/keybr-pages-browser/lib/entry.ts",
       server: "./packages/keybr-pages-server/lib/entry.ts",
-      ads: "./packages/thirdparties-ads/lib/entry.ts",
     },
     output: {
       path: join(import.meta.dirname, "root", "public", "assets"),
@@ -213,7 +205,6 @@ export default [
     devtool: "source-map",
     plugins: [
       new webpack.DefinePlugin({
-        ...ENV,
         "typeof window": JSON.stringify("object"),
       }),
       new MiniCssExtractPlugin({

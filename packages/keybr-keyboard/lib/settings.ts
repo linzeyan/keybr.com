@@ -29,8 +29,10 @@ export enum Emulation {
 }
 
 export const keyboardProps = {
-  language: itemProp("keyboard.language", Language.ALL, Language.EN),
-  layout: xitemProp("keyboard.layout", Layout.ALL, Layout.EN_US),
+  // This is a Zhuyin trainer, a new visitor starts with the Dachen layout
+  // whatever the browser language is.
+  language: itemProp("keyboard.language", Language.ALL, Language.ZH_TW),
+  layout: xitemProp("keyboard.layout", Layout.ALL, Layout.ZH_TW_DACHEN),
   geometry: itemProp("keyboard.geometry", Geometry.ALL, Geometry.ANSI_101),
   zones: itemProp("keyboard.zones", ZoneMod.ALL, ZoneMod.STANDARD),
   emulation: enumProp("keyboard.emulation", Emulation, Emulation.Forward),
@@ -41,8 +43,8 @@ export const keyboardProps = {
 export class KeyboardOptions {
   static default(): KeyboardOptions {
     return new KeyboardOptions(
-      Language.EN,
-      Layout.EN_US,
+      Language.ZH_TW,
+      Layout.ZH_TW_DACHEN,
       Geometry.ANSI_101,
       ZoneMod.STANDARD,
     );

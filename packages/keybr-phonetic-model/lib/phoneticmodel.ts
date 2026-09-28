@@ -5,8 +5,22 @@ import { type Filter } from "./filter.ts";
 import { Letter } from "./letter.ts";
 import { TransitionTable } from "./transitiontable.ts";
 
-const minLength = 3;
-const maxLength = 10;
+const prefixLength = 3;
+
+/**
+ * Returns the length limits of the generated words.
+ *
+ * Zhuyin words are keystroke chunks which end with a first tone syllable,
+ * as the first tone is typed with the space bar. A chunk can be a single
+ * letter like "ㄧ", or span several syllables like "ㄏㄣˇㄏㄠˇㄉㄜ˙ㄖㄣˊ".
+ */
+export function wordLength({ script }: Language): {
+  readonly min: number;
+  readonly max: number;
+} {
+  // ponytail: max 20 covers 75% of the chunks, the rest is cut for readability.
+  return script === "bopomofo" ? { min: 1, max: 20 } : { min: 3, max: 10 };
+}
 
 export abstract class PhoneticModel {
   constructor(
@@ -60,6 +74,7 @@ export function makePhoneticModel(
     table.letters(language).filter(({ codePoint }) => codePoint !== 0x0020),
   );
   const prefixList = new PrefixList(table);
+  const { min: minLength, max: maxLength } = wordLength(language);
 
   const nextWord = (filter: Filter, random: RNG): CodePoint[] => {
     const prefixes = prefixList.findPrefixes(filter);
@@ -185,7 +200,9 @@ class PrefixList {
             this.map.get(codePoint)!.push(prefix);
           }
 
-          if (word.length < minLength) {
+          // Deep enough for a focused tone mark to end a prefix such as
+          // "ㄧㄠˋ", a word cannot start with a tone mark.
+          if (word.length < prefixLength) {
             walk(word);
           }
 

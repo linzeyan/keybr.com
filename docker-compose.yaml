@@ -1,10 +1,14 @@
 services:
   keybr:
+    image: ghcr.io/linzeyan/keybr.com:bopomofo
     build:
       dockerfile: ./Dockerfile
     volumes:
-      - /path/to/data_dir:~/.local/state/keybr
-      - /path/to/data_dir/.env:/etc/keybr/env
+      - keybr-data:/var/lib/keybr
+      - /path/to/env:/etc/keybr/env:ro
     ports:
       - 30044:3000
     restart: unless-stopped
+
+volumes:
+  keybr-data:

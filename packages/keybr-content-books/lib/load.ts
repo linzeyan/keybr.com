@@ -26,27 +26,11 @@ export async function loadContent(book: Book): Promise<Content> {
           { with: { type: "json" } }
         )
       ).default as any;
-    case Book.ES_MARIANELA:
+    case Book.ZH_TW_BAIHUA:
       return (
         await import(
-          /* webpackChunkName: "book-es-marianela" */
-          "./data/es-marianela.json",
-          { with: { type: "json" } }
-        )
-      ).default as any;
-    case Book.DE_ALICE_WONDERLAND:
-      return (
-        await import(
-          /* webpackChunkName: "book-de-alice-wonderland" */
-          "./data/de-alice-wonderland.json",
-          { with: { type: "json" } }
-        )
-      ).default as any;
-    case Book.FR_ALICE_WONDERLAND:
-      return (
-        await import(
-          /* webpackChunkName: "book-fr-alice-wonderland" */
-          "./data/fr-alice-wonderland.json",
+          /* webpackChunkName: "book-zh-tw-baihua" */
+          "./data/zh-tw-baihua.json",
           { with: { type: "json" } }
         )
       ).default as any;

@@ -6,10 +6,10 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/debug": "*",
-    "@keybr/pages-shared": "*",
-    "@keybr/request": "*",
-    "@keybr/settings": "*"
+    "@keybr/debug": "workspace:*",
+    "@keybr/pages-shared": "workspace:*",
+    "@keybr/request": "workspace:*",
+    "@keybr/settings": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

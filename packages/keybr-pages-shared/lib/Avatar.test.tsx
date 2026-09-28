@@ -42,7 +42,6 @@ test("render named user with identicon", () => {
           id: "id",
           name: "somebody",
           imageUrl: null,
-          premium: false,
         }}
       />
     </FakeIntlProvider>,
@@ -61,7 +60,6 @@ test("render named user with custom image", () => {
           id: "id",
           name: "somebody",
           imageUrl: "https://provider.com/image.png",
-          premium: false,
         }}
       />
     </FakeIntlProvider>,

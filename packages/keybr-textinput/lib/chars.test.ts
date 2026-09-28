@@ -40,6 +40,25 @@ test("split styled text", () => {
   ]);
 });
 
+test("split glyph text", () => {
+  // The glyph goes to the first char only, so that the chars of two adjacent
+  // glyphs stay distinguishable.
+  deepEqual(
+    splitStyledText([
+      { text: "ㄨㄛˇ", glyph: "我" },
+      { text: "ㄌㄜ˙", glyph: "了" },
+    ]),
+    [
+      { codePoint: 0x3128, attrs: Attr.Normal, cls: null, glyph: "我" },
+      { codePoint: 0x311b, attrs: Attr.Normal, cls: null, glyph: "" },
+      { codePoint: 0x02c7, attrs: Attr.Normal, cls: null, glyph: "" },
+      { codePoint: 0x310c, attrs: Attr.Normal, cls: null, glyph: "了" },
+      { codePoint: 0x311c, attrs: Attr.Normal, cls: null, glyph: "" },
+      { codePoint: 0x02d9, attrs: Attr.Normal, cls: null, glyph: "" },
+    ],
+  );
+});
+
 test("equal chars", () => {
   isTrue(
     charsAreEqual(
@@ -63,6 +82,13 @@ test("equal chars", () => {
     charsAreEqual(
       { codePoint: 0x0061, attrs: Attr.Normal, cls: "c1" },
       { codePoint: 0x0061, attrs: Attr.Normal, cls: "c2" },
+    ),
+  );
+  // Homophones like "是" and "事" are typed alike, but must render apart.
+  isFalse(
+    charsAreEqual(
+      { codePoint: 0x3115, attrs: Attr.Normal, glyph: "是" },
+      { codePoint: 0x3115, attrs: Attr.Normal, glyph: "事" },
     ),
   );
 });

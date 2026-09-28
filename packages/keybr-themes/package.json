@@ -10,9 +10,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@keybr/color": "*",
-    "@keybr/rand": "*",
-    "@keybr/widget": "*"
+    "@keybr/color": "workspace:*",
+    "@keybr/rand": "workspace:*",
+    "@keybr/widget": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

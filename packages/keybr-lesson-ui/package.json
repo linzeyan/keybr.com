@@ -6,15 +6,15 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/color": "*",
-    "@keybr/intl": "*",
-    "@keybr/lang": "*",
-    "@keybr/lesson": "*",
-    "@keybr/phonetic-model": "*",
-    "@keybr/result": "*",
-    "@keybr/settings": "*",
-    "@keybr/themes": "*",
-    "@keybr/widget": "*"
+    "@keybr/color": "workspace:*",
+    "@keybr/intl": "workspace:*",
+    "@keybr/lang": "workspace:*",
+    "@keybr/lesson": "workspace:*",
+    "@keybr/phonetic-model": "workspace:*",
+    "@keybr/result": "workspace:*",
+    "@keybr/settings": "workspace:*",
+    "@keybr/themes": "workspace:*",
+    "@keybr/widget": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

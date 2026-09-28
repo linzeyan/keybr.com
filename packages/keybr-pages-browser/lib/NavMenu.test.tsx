@@ -1,9 +1,9 @@
 import { test } from "node:test";
-import { FakeIntlProvider, PreferredLocaleContext } from "@keybr/intl";
+import { FakeIntlProvider } from "@keybr/intl";
 import { PageDataContext } from "@keybr/pages-shared";
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import { isNotNull } from "rich-assert";
+import { equal, isNotNull } from "rich-assert";
 import { NavMenu } from "./NavMenu.tsx";
 
 test("render", () => {
@@ -17,24 +17,53 @@ test("render", () => {
           id: "userId",
           name: "userName",
           imageUrl: "imageUrl",
-          premium: false,
         },
         settings: null,
       }}
     >
-      <PreferredLocaleContext.Provider value="pl">
+      <FakeIntlProvider>
+        <MemoryRouter>
+          <NavMenu currentPath="/page" />
+        </MemoryRouter>
+      </FakeIntlProvider>
+    </PageDataContext.Provider>,
+  );
+
+  isNotNull(r.queryByText("userName"));
+  isNotNull(r.queryByText("中文（台灣）"));
+  isNotNull(r.queryByText("English"));
+
+  r.unmount();
+});
+
+test("offer to sign in only when there is a server", () => {
+  for (const staticSite of [false, true]) {
+    const r = render(
+      <PageDataContext.Provider
+        value={{
+          base: "https://www.keybr.com/",
+          locale: "en",
+          user: null,
+          publicUser: {
+            id: null,
+            name: "name",
+            imageUrl: null,
+          },
+          settings: null,
+          staticSite,
+        }}
+      >
         <FakeIntlProvider>
           <MemoryRouter>
             <NavMenu currentPath="/page" />
           </MemoryRouter>
         </FakeIntlProvider>
-      </PreferredLocaleContext.Provider>
-    </PageDataContext.Provider>,
-  );
+      </PageDataContext.Provider>,
+    );
 
-  isNotNull(r.queryByText("userName"));
-  isNotNull(r.queryByText("Polski"));
-  isNotNull(r.queryByText("English"));
+    equal(r.queryByText("Sign-In") != null, !staticSite);
+    isNotNull(r.queryByText("Practice"));
 
-  r.unmount();
+    r.unmount();
+  }
 });

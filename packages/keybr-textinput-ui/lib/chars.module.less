@@ -1,3 +1,20 @@
 .cursor {
   /* Marks a character under cursor. */
 }
+
+.glyph {
+  /* Positions the hint of a glyph. */
+  position: relative;
+}
+
+.glyph[data-hint]::before {
+  /* The keys of a missed glyph under cursor, like a ruby above it. */
+  content: attr(data-hint);
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-end: 100%;
+  font-size: 45%;
+  line-height: 1;
+  white-space: nowrap;
+  translate: -50% 0;
+}

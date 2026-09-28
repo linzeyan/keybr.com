@@ -7,5 +7,5 @@ module.exports = {
     test: ["^test"],
   },
 
-  npmClient: "npm",
+  npmClient: "pnpm",
 };

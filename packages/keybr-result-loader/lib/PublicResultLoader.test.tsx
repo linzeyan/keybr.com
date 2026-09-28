@@ -37,7 +37,6 @@ test("load results", async () => {
         id: "abc",
         name: "somebody",
         imageUrl: null,
-        premium: false,
       }}
     >
       <TestClient />

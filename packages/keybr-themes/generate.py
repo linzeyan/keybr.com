@@ -128,8 +128,6 @@ def generate(font_name, font_file, merge_file=None):
 
 
 def main():
-    generate("arad", "fonts/Arad/main/static/ttf/Arad-Regular.ttf")
-    generate("arad", "fonts/Arad/main/static/ttf/Arad-Bold.ttf")
     generate("cormorant", "fonts/Cormorant/static/Cormorant-Regular.ttf", merge_file="Whitespace-em1000.ttf")
     generate("cormorant", "fonts/Cormorant/static/Cormorant-Italic.ttf", merge_file="Whitespace-em1000.ttf")
     generate("cormorant", "fonts/Cormorant/static/Cormorant-Bold.ttf", merge_file="Whitespace-em1000.ttf")
@@ -178,12 +176,6 @@ def main():
     generate("ubuntu-mono", "fonts/Ubuntu_Mono/UbuntuMono-Italic.ttf", merge_file="Whitespace-em1000.ttf")
     generate("ubuntu-mono", "fonts/Ubuntu_Mono/UbuntuMono-Bold.ttf", merge_file="Whitespace-em1000.ttf")
     generate("ubuntu-mono", "fonts/Ubuntu_Mono/UbuntuMono-BoldItalic.ttf", merge_file="Whitespace-em1000.ttf")
-    generate("noto-sans-jp", "fonts/Noto_Sans_JP/static/NotoSansJP-Regular.ttf", merge_file="Whitespace-em1000.ttf")
-    generate("noto-sans-jp", "fonts/Noto_Sans_JP/static/NotoSansJP-Bold.ttf", merge_file="Whitespace-em1000.ttf")
-    generate("noto-serif-jp", "fonts/Noto_Serif_JP/static/NotoSerifJP-Regular.ttf", merge_file="Whitespace-em1000.ttf")
-    generate("noto-serif-jp", "fonts/Noto_Serif_JP/static/NotoSerifJP-Bold.ttf", merge_file="Whitespace-em1000.ttf")
-    generate("shippori-mincho", "fonts/Shippori_Mincho/ShipporiMincho-Regular.ttf", merge_file="Whitespace-em1000.ttf")
-    generate("shippori-mincho", "fonts/Shippori_Mincho/ShipporiMincho-Bold.ttf", merge_file="Whitespace-em1000.ttf")
 
 
 if __name__ == "__main__":

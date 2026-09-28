@@ -6,9 +6,9 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/config": "*",
-    "@keybr/database": "*",
-    "@keybr/logger": "*"
+    "@keybr/config": "workspace:*",
+    "@keybr/database": "workspace:*",
+    "@keybr/logger": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

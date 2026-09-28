@@ -1,9 +1,9 @@
 import { test } from "node:test";
-import { FakeIntlProvider, PreferredLocaleContext } from "@keybr/intl";
+import { FakeIntlProvider } from "@keybr/intl";
 import { PageDataContext } from "@keybr/pages-shared";
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import { isNotNull } from "rich-assert";
+import { isNotNull, isNull } from "rich-assert";
 import { SubMenu } from "./SubMenu.tsx";
 
 test("render", () => {
@@ -17,23 +17,22 @@ test("render", () => {
           id: "userId",
           name: "userName",
           imageUrl: "imageUrl",
-          premium: false,
         },
         settings: null,
       }}
     >
-      <PreferredLocaleContext.Provider value="pl">
-        <FakeIntlProvider>
-          <MemoryRouter>
-            <SubMenu currentPath="/page" />
-          </MemoryRouter>
-        </FakeIntlProvider>
-      </PreferredLocaleContext.Provider>
+      <FakeIntlProvider>
+        <MemoryRouter>
+          <SubMenu currentPath="/page" />
+        </MemoryRouter>
+      </FakeIntlProvider>
     </PageDataContext.Provider>,
   );
 
-  isNotNull(r.queryByText("Polski"));
+  // Every language is named in itself, never by its locale code.
+  isNotNull(r.queryByText("中文（台灣）"));
   isNotNull(r.queryByText("English"));
+  isNull(r.queryByText("zh-tw"));
 
   r.unmount();
 });

@@ -6,8 +6,8 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/rand": "*",
-    "@keybr/widget": "*"
+    "@keybr/rand": "workspace:*",
+    "@keybr/widget": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

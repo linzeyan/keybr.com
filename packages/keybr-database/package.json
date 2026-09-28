@@ -6,12 +6,11 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/config": "*",
-    "@keybr/names": "*",
-    "@keybr/oauth": "*",
-    "@keybr/pages-shared": "*",
-    "@keybr/publicid": "*",
-    "@keybr/rand": "*"
+    "@keybr/config": "workspace:*",
+    "@keybr/names": "workspace:*",
+    "@keybr/pages-shared": "workspace:*",
+    "@keybr/publicid": "workspace:*",
+    "@keybr/rand": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

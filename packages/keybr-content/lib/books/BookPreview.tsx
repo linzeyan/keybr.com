@@ -5,7 +5,7 @@ import { memo, type ReactNode, useMemo } from "react";
 import { useIntl } from "react-intl";
 import * as styles from "./BookPreview.module.less";
 import { type BookContent } from "./types.ts";
-import { flattenContent } from "./util.ts";
+import { displayText, flattenContent } from "./util.ts";
 
 export const BookPreview = memo(function BookPreview({
   book,
@@ -24,7 +24,10 @@ export const BookPreview = memo(function BookPreview({
     const paragraphs = flattenContent(content);
     const numChapters = content.length;
     const numParagraphs = paragraphs.length;
-    const textStats = textStatsOf(book.language.locale, paragraphs);
+    const textStats = textStatsOf(
+      book.language.locale,
+      paragraphs.map((paragraph) => displayText(book, paragraph)),
+    );
     return {
       numChapters,
       numParagraphs,

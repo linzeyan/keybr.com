@@ -3,6 +3,7 @@ import {
   type BookContent,
   type Content,
   flattenContent,
+  splitGlyphs,
   splitParagraph,
 } from "@keybr/content";
 import { filterText, type Keyboard } from "@keybr/keyboard";
@@ -41,7 +42,7 @@ export class BooksLesson extends Lesson {
       ...this.paragraphs.slice(this.paragraphIndex),
       ...this.paragraphs.slice(0, this.paragraphIndex),
     ]
-      .map(splitParagraph)
+      .map((paragraph) => splitParagraph(book, paragraph))
       .flat();
   }
 
@@ -54,20 +55,39 @@ export class BooksLesson extends Lesson {
   }
 
   override generate() {
-    return generateFragment(this.settings, wordSequence(this.wordList, this));
+    const fragment = generateFragment(
+      this.settings,
+      wordSequence(this.wordList, this),
+    );
+    // A Zhuyin book keeps displaying the chars it does not type.
+    return this.#zhuyin ? splitGlyphs(fragment, this.#codePoints()) : fragment;
   }
 
-  #flattenContent(content: Content) {
-    const lettersOnly = this.settings.get(lessonProps.books.lettersOnly);
-    const lowercase = this.settings.get(lessonProps.books.lowercase);
+  /** A Zhuyin book displays its Hanzi in place of the typed keys. */
+  get #zhuyin() {
+    return this.book.language.script === "bopomofo";
+  }
+
+  /** Returns the code points to type, without punctuation if so chosen. */
+  #codePoints() {
     const codePoints = new Set(this.keyboard.getCodePoints());
-    if (lettersOnly) {
+    if (this.settings.get(lessonProps.books.lettersOnly)) {
       for (const codePoint of codePoints) {
         if (!this.model.language.includes(codePoint)) {
           codePoints.delete(codePoint);
         }
       }
     }
+    return codePoints;
+  }
+
+  #flattenContent(content: Content) {
+    if (this.#zhuyin) {
+      // The Hanzi are not typed, but they must stay to be displayed.
+      return flattenContent(content);
+    }
+    const lowercase = this.settings.get(lessonProps.books.lowercase);
+    const codePoints = this.#codePoints();
     return flattenContent(content).map((paragraph) => {
       let text = filterText(paragraph, codePoints);
       if (lowercase) {

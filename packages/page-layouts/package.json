@@ -6,12 +6,12 @@
   "main": "lib/index.ts",
   "types": ".types/index.d.ts",
   "dependencies": {
-    "@keybr/intl": "*",
-    "@keybr/keyboard": "*",
-    "@keybr/keyboard-ui": "*",
-    "@keybr/phonetic-model": "*",
-    "@keybr/phonetic-model-loader": "*",
-    "@keybr/widget": "*"
+    "@keybr/intl": "workspace:*",
+    "@keybr/keyboard": "workspace:*",
+    "@keybr/keyboard-ui": "workspace:*",
+    "@keybr/phonetic-model": "workspace:*",
+    "@keybr/phonetic-model-loader": "workspace:*",
+    "@keybr/widget": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

@@ -34,6 +34,7 @@ function Content({ bookContent }: { bookContent: BookContent }) {
       <Para>Type the content of a book.</Para>
 
       <BookSelector
+        books={[...typingTestProps.book.all]}
         book={book}
         onChange={(book) => {
           updateSettings(
@@ -57,6 +58,7 @@ function Content({ bookContent }: { bookContent: BookContent }) {
       />
 
       <ParagraphPreview
+        book={book}
         paragraphs={paragraphs}
         paragraphIndex={paragraphIndex}
       />

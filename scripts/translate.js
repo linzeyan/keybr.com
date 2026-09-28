@@ -1,5 +1,3 @@
-import { writeFileSync } from "node:fs";
-import { join } from "node:path";
 import { compile, extract } from "@formatjs/cli-lib";
 import { globSync } from "glob";
 import { readJsonSync, writeJsonSync } from "./lib/fs-json.js";
@@ -10,7 +8,7 @@ import {
   translationsPath,
 } from "./lib/intl-io.js";
 import { allLocales, defaultLocale } from "./locale.js";
-import { findPackages, rootDir } from "./root.js";
+import { findPackages } from "./root.js";
 
 function findSourceFiles() {
   const files = [];
@@ -103,73 +101,6 @@ async function compileMessages() {
   }
 }
 
-async function writeReport() {
-  const report = {};
-  const defaultTranslationsFile = translationsPath(defaultLocale);
-  const defaultTranslations = readJsonSync(defaultTranslationsFile);
-  for (const locale of allLocales) {
-    const translationsFile = translationsPath(locale);
-    const translations = readJsonSync(translationsFile);
-    const localeReport = (report[locale] = {
-      translated: [],
-      untranslated: [],
-    });
-    for (const [id, message] of Object.entries(defaultTranslations)) {
-      if (translations[id]) {
-        localeReport.translated.push([id, message]);
-      } else if (!/\{[a-z]+\}/.test(message)) {
-        localeReport.untranslated.push([id, message]);
-      }
-    }
-  }
-  const languageName = new Intl.DisplayNames("en", { type: "language" });
-  const countWords = (count, [id, message]) =>
-    count +
-    message
-      .replaceAll(/\{[a-zA-Z]}+/g, "")
-      .replaceAll(/<\/?[a-z]+>/g, "")
-      .match(/\p{L}+/gu).length;
-  const lines = [];
-  for (const [locale, { translated, untranslated }] of Object.entries(report)) {
-    lines.push(`# ${languageName.of(locale)}`);
-    lines.push(``);
-    lines.push(
-      `Translated: ` +
-        `${translated.length} messages, ` +
-        `${translated.reduce(countWords, 0)} words`,
-    );
-    lines.push(``);
-    lines.push(
-      `Untranslated: ` +
-        `${untranslated.length} messages, ` +
-        `${untranslated.reduce(countWords, 0)} words`,
-    );
-    if (untranslated.length > 0) {
-      untranslated.sort(
-        (a, b) => a[1].length - b[1].length || a[1].localeCompare(b[1]),
-      );
-      const head = untranslated.slice(0, 20);
-      lines.push(``);
-      for (const [id, message] of head) {
-        const prefix = message.substring(0, 60);
-        if (message.length > prefix.length) {
-          lines.push(`* *${prefix}...*`);
-        } else {
-          lines.push(`* *${prefix}*`);
-        }
-      }
-      if (untranslated.length > head.length) {
-        lines.push(`* ...`);
-      }
-    }
-    lines.push(``);
-  }
-  writeFileSync(
-    join(rootDir, "docs", "translations_report.md"),
-    lines.join("\n"),
-  );
-}
-
 function remap(entries, callback) {
   return Object.fromEntries(Object.entries(entries).map(callback));
 }
@@ -177,4 +108,3 @@ function remap(entries, callback) {
 await extractTranslations();
 await syncTranslations();
 await compileMessages();
-await writeReport();

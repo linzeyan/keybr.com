@@ -129,15 +129,14 @@ export class GuidedLesson extends Lesson {
   }
 
   #getLetters() {
-    const { letters } = this.model;
+    const { letters, language } = this.model;
     const { codePoints } = this;
-    if (this.settings.get(lessonProps.guided.keyboardOrder)) {
-      return Letter.weightedFrequencyOrder(letters, ({ codePoint }) =>
-        codePoints.weight(codePoint),
-      );
-    } else {
-      return Letter.frequencyOrder(letters);
-    }
+    const ordered = this.settings.get(lessonProps.guided.keyboardOrder)
+      ? Letter.weightedFrequencyOrder(letters, ({ codePoint }) =>
+          codePoints.weight(codePoint),
+        )
+      : Letter.frequencyOrder(letters);
+    return language.script === "bopomofo" ? zhuyinOrder(ordered) : ordered;
   }
 
   #makeWordGenerator(filter: Filter, rng: RNGStream) {
@@ -159,4 +158,39 @@ export class GuidedLesson extends Lesson {
     }
     return pseudoWords;
   }
+}
+
+/**
+ * Unlocks the Zhuyin letters in rounds of a final, an initial and a tone mark,
+ * until the tone marks run out. A lesson made of finals alone offers too few
+ * syllables, and repeats words like "ㄨㄟ ㄨㄟ ㄨㄟ", while a round of each
+ * group makes real syllables such as "ㄉㄧˋ" from the very first lesson.
+ * The given order is kept within each group.
+ */
+function zhuyinOrder(letters: readonly Letter[]): Letter[] {
+  const finals: Letter[] = [];
+  const initials: Letter[] = [];
+  const tones: Letter[] = [];
+  for (const letter of letters) {
+    const { codePoint } = letter;
+    if (codePoint >= /* "ㄅ" */ 0x3105 && codePoint <= /* "ㄙ" */ 0x3119) {
+      initials.push(letter);
+    } else if (
+      codePoint >= /* "ㄚ" */ 0x311a &&
+      codePoint <= /* "ㄩ" */ 0x3129
+    ) {
+      finals.push(letter); // Including the medials "ㄧ", "ㄨ" and "ㄩ".
+    } else {
+      tones.push(letter);
+    }
+  }
+  const result: Letter[] = [];
+  for (let i = 0; result.length < letters.length; i++) {
+    for (const group of [finals, initials, tones]) {
+      if (i < group.length) {
+        result.push(group[i]);
+      }
+    }
+  }
+  return result;
 }

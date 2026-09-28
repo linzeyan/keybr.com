@@ -18,13 +18,13 @@
 - `0x1d`: English/Canary (matrix)
 - `0x1e`: English/Canary
 - `0x1f`: English/Colemak-DH Wide (ANSI)
-- `0x20`: German/Germany
-- `0x21`: German/Switzerland
-- `0x22`: German/Neo 2
-- `0x23`: German/Bone
-- `0x24`: German/Mine
-- `0x25`: German/Noted
-- `0x26`: German/CMOS
+- `0x20`:
+- `0x21`:
+- `0x22`:
+- `0x23`:
+- `0x24`:
+- `0x25`:
+- `0x26`:
 - `0x27`:
 - `0x28`:
 - `0x29`:
@@ -34,14 +34,14 @@
 - `0x2d`:
 - `0x2e`:
 - `0x2f`:
-- `0x30`: French/France
-- `0x31`: French/Canada
-- `0x32`: French/Switzerland
-- `0x33`: French/Bepo
-- `0x34`: French/Ergo-L
-- `0x35`: French/Optimot Ergo
-- `0x36`: French/Erglace
-- `0x37`: French/Ergopti
+- `0x30`:
+- `0x31`:
+- `0x32`:
+- `0x33`:
+- `0x34`:
+- `0x35`:
+- `0x36`:
+- `0x37`:
 - `0x38`:
 - `0x39`:
 - `0x3a`:
@@ -50,7 +50,7 @@
 - `0x3d`:
 - `0x3e`:
 - `0x3f`:
-- `0x40`: Italian/Italy
+- `0x40`:
 - `0x41`:
 - `0x42`:
 - `0x43`:
@@ -58,15 +58,15 @@
 - `0x45`:
 - `0x46`:
 - `0x47`:
-- `0x48`: Lithuanian/Lithuania
-- `0x49`: Latvian/Latvia
-- `0x4a`: Finnish/Finland
-- `0x4b`: Estonian/Estonia
+- `0x48`:
+- `0x49`:
+- `0x4a`:
+- `0x4b`:
 - `0x4c`:
 - `0x4d`:
 - `0x4e`:
 - `0x4f`:
-- `0x50`: Spanish/Spain
+- `0x50`:
 - `0x51`:
 - `0x52`:
 - `0x53`:
@@ -74,7 +74,7 @@
 - `0x55`:
 - `0x56`:
 - `0x57`:
-- `0x58`: Polish/Poland
+- `0x58`:
 - `0x59`:
 - `0x5a`:
 - `0x5b`:
@@ -82,9 +82,9 @@
 - `0x5d`:
 - `0x5e`:
 - `0x5f`:
-- `0x60`: Portuguese/Brazil (ABNT2)
+- `0x60`:
 - `0x61`:
-- `0x62`: Portuguese/Portugal
+- `0x62`:
 - `0x63`:
 - `0x64`:
 - `0x65`:
@@ -98,15 +98,15 @@
 - `0x6d`:
 - `0x6e`:
 - `0x6f`:
-- `0x70`: Russian/Russia
-- `0x71`: Russian/Statica 3x5 (Matrix)
+- `0x70`:
+- `0x71`:
 - `0x72`:
 - `0x73`:
-- `0x74`: Belarusian/Belarus
+- `0x74`:
 - `0x75`:
 - `0x76`:
 - `0x77`:
-- `0x78`: Ukrainian/Ukraine
+- `0x78`:
 - `0x79`:
 - `0x7a`:
 - `0x7b`:
@@ -114,56 +114,56 @@
 - `0x7d`:
 - `0x7e`:
 - `0x7f`:
-- `0x80`: Swedish/Sweden
-- `0x81`: Czech/Czechia
-- `0x82`: Slovenian/Slovenia
-- `0x83`: Greek/Greece
-- `0x84`: Hebrew/Israel (מסורתי)
-- `0x85`: Dutch/Netherlands
-- `0x86`: Dutch/Belgium
-- `0x87`: Hungarian/Hungary
-- `0x88`: Norwegian Bokmål/Norway
-- `0x89`: Turkish/Türkiye Q
-- `0x8a`: Turkish/Türkiye F
+- `0x80`:
+- `0x81`:
+- `0x82`:
+- `0x83`:
+- `0x84`:
+- `0x85`:
+- `0x86`:
+- `0x87`:
+- `0x88`:
+- `0x89`:
+- `0x8a`:
 - `0x8b`: English/Norman
 - `0x8c`: English/Halmak
-- `0x8d`: Arabic/Saudi Arabia (101)
-- `0x8e`: Arabic/Saudi Arabia (102)
-- `0x8f`: Persian/Persian Legacy «پیش فرض فارسی»
-- `0x90`: Hebrew/Israel (ארקן)
-- `0x91`: Persian/Persian Standard «استاندارد فارسی»
+- `0x8d`:
+- `0x8e`:
+- `0x8f`:
+- `0x90`:
+- `0x91`:
 - `0x92`: English/Engram
 - `0x93`: English/Nerps
 - `0x94`: English/Nerps (matrix)
 - `0x95`: English/Hands Down Neu
 - `0x96`: English/Sturdy
-- `0x97`: Spanish/Mexico
-- `0x98`: Polish/FWYR
+- `0x97`:
+- `0x98`:
 - `0x99`: English/Graphite
-- `0x9a`: Thai/Thai Kedmanee
-- `0x9b`: Thai/Thai Pattachote
-- `0x9c`: Thai/Thai Manoonchai V1
-- `0x9d`: Norwegian Bokmål/Kvikk
-- `0x9e`: Norwegian Bokmål/Skarp
-- `0x9f`: Norwegian Bokmål/Dvorak
-- `0xa0`: Romanian/Romania
+- `0x9a`:
+- `0x9b`:
+- `0x9c`:
+- `0x9d`:
+- `0x9e`:
+- `0x9f`:
+- `0xa0`:
 - `0xa1`: English/Gallium
 - `0xa2`: English/Gallium (Matrix)
 - `0xa3`: English/Hands Down Promethium (Matrix)
 - `0xa4`: English/APTv3
 - `0xa5`: English/Focal
-- `0xa6`: German/AdNW BuT-XCV
-- `0xa7`: Danish/Denmark
+- `0xa6`:
+- `0xa7`:
 - `0xa8`: English/Enthium V6 (Matrix)
 - `0xa9`: English/Night (matrix)
 - `0xaa`: English/MTGAP
-- `0xab`: Spanish/Dvorak
-- `0xac`: Spanish/Dvorak (Latin American)
+- `0xab`:
+- `0xac`:
 - `0xad`: English/Graphite Angle KP
 - `0xae`: English/Kuntem
 - `0xaf`: English/Hands Down Promethium Inverted (Matrix)
 - `0xb0`:
-- `0xb1`: Breton/France
+- `0xb1`:
 - `0xb2`:
 - `0xb3`:
 - `0xb4`:
@@ -174,7 +174,7 @@
 - `0xb9`: English/Enthium V11 (Matrix)
 - `0xba`: English/Enthium V13 (Matrix)
 - `0xbb`: English/Enthium V14 (Matrix)
-- `0xbc`:
+- `0xbc`: Chinese (Taiwan)/大千
 - `0xbd`:
 - `0xbe`:
 - `0xbf`:
@@ -243,7 +243,7 @@
 - `0xfe`:
 - `0xff`:
 
-95 allocated identifiers
+38 allocated identifiers
 
-145 free identifiers
+202 free identifiers
 

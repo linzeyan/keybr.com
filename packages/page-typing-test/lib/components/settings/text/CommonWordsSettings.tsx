@@ -1,6 +1,6 @@
 import { type WordList, wordListStats } from "@keybr/content";
 import { WordListLoader } from "@keybr/content-words";
-import { useIntlDisplayNames, useIntlNumbers } from "@keybr/intl";
+import { useIntlNumbers } from "@keybr/intl";
 import { Language } from "@keybr/keyboard";
 import { useSettings } from "@keybr/settings";
 import {
@@ -8,7 +8,6 @@ import {
   FieldList,
   FieldSet,
   NameValue,
-  OptionList,
   Para,
   Range,
   TextField,
@@ -19,7 +18,7 @@ import { typingTestProps } from "../../../settings.ts";
 export function CommonWordsSettings() {
   const { settings } = useSettings();
   return (
-    <WordListLoader language={settings.get(typingTestProps.language)}>
+    <WordListLoader language={Language.ZH_TW}>
       {(wordList) => (
         <Content
           wordList={wordList.slice(
@@ -35,36 +34,11 @@ export function CommonWordsSettings() {
 function Content({ wordList }: { wordList: WordList }) {
   const { settings, updateSettings } = useSettings();
   const { formatMessage } = useIntl();
-  const { formatLanguageName } = useIntlDisplayNames();
   const { formatNumber } = useIntlNumbers();
   const { wordCount, avgWordLength } = wordListStats(wordList);
   return (
     <FieldSet legend="Common words">
       <Para>Type the common words.</Para>
-
-      <FieldList>
-        <Field>
-          {formatMessage({
-            id: "t_Language:",
-            defaultMessage: "Language:",
-          })}
-        </Field>
-
-        <Field>
-          <OptionList
-            options={Language.ALL.map((item) => ({
-              value: item.id,
-              name: formatLanguageName(item.id),
-            }))}
-            value={String(settings.get(typingTestProps.language))}
-            onSelect={(id) => {
-              updateSettings(
-                settings.set(typingTestProps.language, Language.ALL.get(id)),
-              );
-            }}
-          />
-        </Field>
-      </FieldList>
 
       <FieldList>
         <Field>

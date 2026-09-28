@@ -16,7 +16,6 @@ test("render sign-in fragment", () => {
           id: "xyz",
           name: "name",
           imageUrl: null,
-          premium: false,
         },
         settings: null,
       }}
@@ -44,24 +43,12 @@ test("render account fragment", () => {
           email: "name@keybr.com",
           name: "name",
           anonymized: false,
-          externalId: [
-            {
-              provider: "custom",
-              id: "externalId",
-              name: "externalName",
-              url: "externalUrl",
-              imageUrl: "externalImageUrl",
-              createdAt: "2001-02-03T04:05:06.789Z",
-            },
-          ],
-          order: null,
           createdAt: "2001-02-03T04:05:06.789Z",
         },
         publicUser: {
           id: "xyz",
           name: "name",
           imageUrl: null,
-          premium: false,
         },
         settings: null,
       }}
