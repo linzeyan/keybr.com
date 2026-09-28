@@ -1,6 +1,11 @@
 import { type IncomingHeaders } from "@fastr/headers";
 import { FavIconAssets, ScriptAssets, StylesheetAssets } from "@keybr/assets";
-import { getDir } from "@keybr/intl";
+import {
+  allLocales,
+  defaultLocale,
+  getDir,
+  localeChoiceKey,
+} from "@keybr/intl";
 import {
   LoadingProgress,
   PageDataScript,
@@ -55,10 +60,11 @@ function Head({
   readonly children?: ReactNode;
 }) {
   const { formatMessage } = useIntl();
-  const { staticSite } = usePageData();
+  const { locale, staticSite } = usePageData();
   return (
     <head>
       <meta charSet="UTF-8" />
+      {locale === defaultLocale && <LocaleScript />}
       {staticSite && <ThemeScript />}
       <title>{formatMessage(page.title)}</title>
       <StylesheetAssets entrypoint="browser" />
@@ -71,6 +77,32 @@ function Head({
       {children}
     </head>
   );
+}
+
+/**
+ * A path without a locale is a page in the default language. Before anything
+ * loads, send the visitor to the same page in their language instead: the one
+ * they chose last with `LocaleSwitcher`, or else the first language of their
+ * browser which the site has. The static site has no server to do this.
+ */
+function LocaleScript() {
+  const others = allLocales.filter((locale) => locale !== defaultLocale);
+  const languages = allLocales.map((locale) => [locale.split("-")[0], locale]);
+  const script =
+    `try{` +
+    `var c=JSON.parse(localStorage.getItem(${JSON.stringify(localeChoiceKey)})||"null"),` +
+    `o=${JSON.stringify(others)},m=${JSON.stringify(languages)},` +
+    `n=navigator.languages||[navigator.language],p=location.pathname,i,j;` +
+    `if(c!==${JSON.stringify(defaultLocale)}&&o.indexOf(c)<0)c=null;` +
+    `for(i=0;c==null&&i<n.length;i++)` +
+    `for(j=0;j<m.length;j++)` +
+    `if(String(n[i]).toLowerCase().split("-")[0]===m[j][0]){c=m[j][1];break}` +
+    // A path with a locale gets here only by the single-page app fallback of
+    // the static site, redirecting it again would never end.
+    `if(o.indexOf(c)>=0&&!o.some(function(x){return p==="/"+x||p.indexOf("/"+x+"/")===0}))` +
+    `location.replace("/"+c+(p==="/"?"":p)+location.search+location.hash);` +
+    `}catch(e){}`;
+  return <script dangerouslySetInnerHTML={{ __html: script }} />;
 }
 
 /**

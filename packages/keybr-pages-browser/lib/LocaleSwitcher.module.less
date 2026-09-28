@@ -1,0 +1,27 @@
+.root {
+  display: flex;
+  margin-inline: 1rem;
+  margin-block: 0.5rem;
+  border: var(--separator-border);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1.5rem;
+}
+
+.item {
+  flex: 1 1 0;
+  padding-inline: 0.5rem;
+  color: var(--text-color);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  & + & {
+    border-inline-start: var(--separator-border);
+  }
+
+  &.isActive {
+    background-color: var(--primary-l1);
+  }
+}

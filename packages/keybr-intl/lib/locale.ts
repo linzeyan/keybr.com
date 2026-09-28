@@ -23,6 +23,12 @@ export const defaultLocale: LocaleId = "en";
 
 export const allLocales: readonly LocaleId[] = [defaultLocale, "zh-tw"];
 
+/**
+ * The local storage key of the interface language which the visitor chose
+ * last. Until they choose one, the browser language decides.
+ */
+export const localeChoiceKey = "prefs.locale";
+
 export function getDir(locale: LocaleId): "ltr" | "rtl" {
   switch (locale) {
     case "ar":

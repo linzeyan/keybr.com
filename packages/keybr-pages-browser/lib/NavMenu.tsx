@@ -10,6 +10,7 @@ import { clsx } from "clsx";
 import { type ReactNode } from "react";
 import { useIntl } from "react-intl";
 import { NavLink } from "react-router";
+import { LocaleSwitcher } from "./LocaleSwitcher.tsx";
 import * as styles from "./NavMenu.module.less";
 import { SubMenu } from "./SubMenu.tsx";
 import { ThemeSwitcher } from "./themes/ThemeSwitcher.tsx";
@@ -26,6 +27,7 @@ export function NavMenu({ currentPath }: { readonly currentPath: string }) {
 
       <MenuItem>
         <ThemeSwitcher />
+        <LocaleSwitcher currentPath={currentPath} />
       </MenuItem>
 
       <MenuItem>
@@ -49,7 +51,7 @@ export function NavMenu({ currentPath }: { readonly currentPath: string }) {
       </MenuItem>
 
       <MenuItem>
-        <SubMenu currentPath={currentPath} />
+        <SubMenu />
       </MenuItem>
     </div>
   );

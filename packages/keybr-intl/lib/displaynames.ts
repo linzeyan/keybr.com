@@ -15,6 +15,13 @@ const capitalize = (value: string, locale: string): string =>
       word.substring(1).toLocaleLowerCase(locale),
   );
 
+// The two languages of this site are always named in themselves, whatever
+// the language of the interface is, so that everybody finds their own.
+const ownNames = new Map([
+  ["en", "English"],
+  ["zh-tw", "正體中文"],
+]);
+
 const factory = (intl: IntlShape): IntlDisplayNames => {
   const { locale } = intl;
   const formatRegionName = (id: string): string => {
@@ -25,6 +32,10 @@ const factory = (intl: IntlShape): IntlDisplayNames => {
     return capitalize(dn.of(id) || "", locale) || id;
   };
   const formatLanguageName = (id: string): string => {
+    const ownName = ownNames.get(id.toLowerCase());
+    if (ownName != null) {
+      return ownName;
+    }
     const dn = intl.formatters.getDisplayNames(locale, {
       type: "language",
       fallback: "none",
@@ -32,6 +43,10 @@ const factory = (intl: IntlShape): IntlDisplayNames => {
     return capitalize(dn.of(id) || "", locale) || id;
   };
   const formatLocalLanguageName = (id: string): string => {
+    const ownName = ownNames.get(id.toLowerCase());
+    if (ownName != null) {
+      return ownName;
+    }
     const dn = intl.formatters.getDisplayNames(id, {
       type: "language",
       fallback: "none",

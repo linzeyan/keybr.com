@@ -30,7 +30,7 @@ test("render", () => {
   );
 
   isNotNull(r.queryByText("userName"));
-  isNotNull(r.queryByText("中文（台灣）"));
+  isNotNull(r.queryByText("正體中文"));
   isNotNull(r.queryByText("English"));
 
   r.unmount();

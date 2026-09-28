@@ -52,7 +52,6 @@ test("format language name pl-PL", () => {
     createIntl({ locale: "pl-PL" }),
   );
 
-  equal(formatLanguageName("en"), "Angielski");
   equal(formatLocalLanguageName("en"), "English");
   equal(formatLanguageName("de"), "Niemiecki");
   equal(formatLocalLanguageName("de"), "Deutsch");
@@ -62,6 +61,20 @@ test("format language name pl-PL", () => {
   equal(formatLocalLanguageName("pt-BR"), "Português (Brasil)");
   equal(formatLanguageName("zh-Hans-CN"), "Chiński (Uproszczone, Chiny)");
   equal(formatLocalLanguageName("zh-Hans-CN"), "中文（简体，中国）");
+});
+
+test("name the languages of the site in themselves", () => {
+  for (const locale of ["en", "zh-tw", "pl-PL"]) {
+    const { formatLanguageName, formatLocalLanguageName } =
+      makeIntlDisplayNames(createIntl({ locale }));
+
+    // Whatever the interface language is, everybody finds their own.
+    // Keyboard languages are "zh-TW", interface locales are "zh-tw".
+    equal(formatLanguageName("zh-TW"), "正體中文");
+    equal(formatLanguageName("en"), "English");
+    equal(formatLocalLanguageName("zh-tw"), "正體中文");
+    equal(formatLocalLanguageName("en"), "English");
+  }
 });
 
 test("format all language names in all locales", () => {
