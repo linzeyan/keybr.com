@@ -100,6 +100,15 @@ pnpm --filter @keybr/generators run generate-zhuyin
 pnpm --filter @keybr/generators run generate-languages
 ```
 
+### 發版
+
+把版本說明寫進 annotated tag 再推上去。CI 通過後會發布這個版號的 Docker 映像檔，再用 tag 的訊息建立 GitHub Release。加上 `--cleanup=verbatim`，說明裡 `#` 開頭的 Markdown 標題才不會被 git 當成註解刪掉：
+
+```shell
+git tag -a v0.2.0 --cleanup=verbatim -F notes.md
+git push origin v0.2.0
+```
+
 ## 授權
 
 以 [GNU Affero General Public License v3.0](LICENSE) 釋出，和上游的 keybr.com 相同。注音資料來自小麥注音（MIT）與 libtabe（BSD），書本內容是維基文庫上的公有領域作品；完整的來源與授權聲明見 [NOTICE.md](NOTICE.md)。
