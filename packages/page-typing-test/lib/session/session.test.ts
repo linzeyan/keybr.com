@@ -67,7 +67,7 @@ test("fit zhuyin book lines to the width of their hanzi", () => {
       textDisplay: textDisplaySettings,
     },
     new BookParagraphsGenerator(
-      { paragraphIndex: 0 },
+      { paragraphIndex: 0, lettersOnly: false },
       {
         book: Book.ZH_TW_BAIHUA,
         content: [["", ["今ㄐㄧㄣ 天ㄊㄧㄢ ，他ㄊㄚ 說ㄕㄨㄛ 。"]]],
@@ -94,7 +94,7 @@ test("split a run of hanzi wider than a line between two of them", () => {
       textDisplay: textDisplaySettings,
     },
     new BookParagraphsGenerator(
-      { paragraphIndex: 0 },
+      { paragraphIndex: 0, lettersOnly: false },
       {
         book: Book.ZH_TW_BAIHUA,
         content: [["", ["我ㄨㄛˇ們ㄇㄣ˙是ㄕˋ『好ㄏㄠˇ朋ㄆㄥˊ友ㄧㄡˇ』。"]]],

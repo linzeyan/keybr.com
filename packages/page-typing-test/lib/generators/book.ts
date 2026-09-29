@@ -1,7 +1,9 @@
 import {
   type Book,
   type BookContent,
+  type Content,
   flattenContent,
+  removePunctuation,
   splitGlyphs,
   splitParagraph,
 } from "@keybr/content";
@@ -12,6 +14,7 @@ import { type TextGenerator } from "./types.ts";
 
 type BookSettings = {
   readonly paragraphIndex: number;
+  readonly lettersOnly: boolean;
 };
 
 type Mark = {
@@ -34,7 +37,7 @@ export class BookParagraphsGenerator implements TextGenerator<Mark> {
   ) {
     this.#book = book;
     this.#codePoints = keyboard.getCodePoints();
-    const paragraphs = flattenContent(content);
+    const paragraphs = bookParagraphs(content, settings);
     const paragraphIndex = clamp(settings.paragraphIndex, 0, paragraphs.length);
     this.#paragraphs = paragraphs;
     this.#paragraphIndex = paragraphIndex;
@@ -81,4 +84,13 @@ export class BookParagraphsGenerator implements TextGenerator<Mark> {
       ? splitGlyphs(words, this.#codePoints)
       : words;
   }
+}
+
+/** Returns the paragraphs to type, the typing test books are in Zhuyin. */
+export function bookParagraphs(
+  content: Content,
+  { lettersOnly }: { readonly lettersOnly: boolean },
+): readonly string[] {
+  const paragraphs = flattenContent(content);
+  return lettersOnly ? paragraphs.map(removePunctuation) : paragraphs;
 }

@@ -4,6 +4,11 @@ import coverImageEnAliceWonderland from "../../assets/cover-image-en-alice-wonde
 import coverImageEnCallWild from "../../assets/cover-image-en-call-wild.jpg";
 import coverImageEnJekyllHyde from "../../assets/cover-image-en-jekyll-hyde.jpg";
 import coverImageZhTwBaihua from "../../assets/cover-image-zh-tw-baihua.jpg";
+import coverImageZhTwClassics from "../../assets/cover-image-zh-tw-classics.jpg";
+import coverImageZhTwNahan from "../../assets/cover-image-zh-tw-nahan.jpg";
+import coverImageZhTwPanghuang from "../../assets/cover-image-zh-tw-panghuang.jpg";
+import coverImageZhTwXinshi from "../../assets/cover-image-zh-tw-xinshi.jpg";
+import coverImageZhTwZhaohua from "../../assets/cover-image-zh-tw-zhaohua.jpg";
 
 export class Book implements EnumItem {
   static readonly EN_ALICE_WONDERLAND = new Book(
@@ -31,8 +36,43 @@ export class Book implements EnumItem {
     /* id= */ "zh-tw-baihua",
     /* language= */ Language.ZH_TW,
     /* title= */ "白話文選",
-    /* author= */ "朱自清、許地山、胡適、魯迅",
+    /* author= */ "朱自清、許地山、胡適",
     /* coverImage= */ coverImageZhTwBaihua,
+  );
+  static readonly ZH_TW_NAHAN = new Book(
+    /* id= */ "zh-tw-nahan",
+    /* language= */ Language.ZH_TW,
+    /* title= */ "吶喊",
+    /* author= */ "魯迅",
+    /* coverImage= */ coverImageZhTwNahan,
+  );
+  static readonly ZH_TW_PANGHUANG = new Book(
+    /* id= */ "zh-tw-panghuang",
+    /* language= */ Language.ZH_TW,
+    /* title= */ "彷徨",
+    /* author= */ "魯迅",
+    /* coverImage= */ coverImageZhTwPanghuang,
+  );
+  static readonly ZH_TW_ZHAOHUA = new Book(
+    /* id= */ "zh-tw-zhaohua",
+    /* language= */ Language.ZH_TW,
+    /* title= */ "朝花夕拾",
+    /* author= */ "魯迅",
+    /* coverImage= */ coverImageZhTwZhaohua,
+  );
+  static readonly ZH_TW_XINSHI = new Book(
+    /* id= */ "zh-tw-xinshi",
+    /* language= */ Language.ZH_TW,
+    /* title= */ "新詩與小說",
+    /* author= */ "徐志摩、聞一多、郁達夫",
+    /* coverImage= */ coverImageZhTwXinshi,
+  );
+  static readonly ZH_TW_CLASSICS = new Book(
+    /* id= */ "zh-tw-classics",
+    /* language= */ Language.ZH_TW,
+    /* title= */ "古典小說選",
+    /* author= */ "吳承恩、曹雪芹、施耐庵、吳敬梓",
+    /* coverImage= */ coverImageZhTwClassics,
   );
 
   static readonly ALL = new Enum<Book>(
@@ -40,6 +80,11 @@ export class Book implements EnumItem {
     Book.EN_JEKYLL_HYDE,
     Book.EN_CALL_WILD,
     Book.ZH_TW_BAIHUA,
+    Book.ZH_TW_NAHAN,
+    Book.ZH_TW_PANGHUANG,
+    Book.ZH_TW_ZHAOHUA,
+    Book.ZH_TW_XINSHI,
+    Book.ZH_TW_CLASSICS,
   );
 
   /** Returns the books which can be typed in the given language. */

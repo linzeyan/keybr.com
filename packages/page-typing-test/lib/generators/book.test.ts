@@ -1,13 +1,14 @@
 import { test } from "node:test";
 import { Book } from "@keybr/content";
 import { Layout, loadKeyboard } from "@keybr/keyboard";
-import { equal } from "rich-assert";
+import { deepEqual, equal } from "rich-assert";
 import { BookParagraphsGenerator } from "./book.ts";
 
 test("generate words", () => {
   const generator = new BookParagraphsGenerator(
     {
       paragraphIndex: 0,
+      lettersOnly: false,
     },
     {
       book: Book.EN_ALICE_WONDERLAND,
@@ -42,4 +43,27 @@ test("generate words", () => {
 
   equal(generator.nextWord(), "one");
   equal(generator.nextWord(), "two");
+});
+
+test("remove the punctuation of a zhuyin book", () => {
+  const generator = new BookParagraphsGenerator(
+    {
+      paragraphIndex: 0,
+      lettersOnly: true,
+    },
+    {
+      book: Book.ZH_TW_BAIHUA,
+      content: [["", ["「我ㄨㄛˇ親ㄑㄧㄣ 。」天ㄊㄧㄢ"]]],
+    },
+    loadKeyboard(Layout.ZH_TW_DACHEN),
+  );
+
+  // Neither typed nor displayed.
+  equal(generator.nextWord(), "我ㄨㄛˇ親ㄑㄧㄣ");
+  equal(generator.nextWord(), "天ㄊㄧㄢ");
+  deepEqual(generator.format("我ㄨㄛˇ親ㄑㄧㄣ 天ㄊㄧㄢ"), [
+    { text: "ㄨㄛˇ", glyph: "我" },
+    { text: "ㄑㄧㄣ ", glyph: "親" },
+    { text: "ㄊㄧㄢ", glyph: "天" },
+  ]);
 });

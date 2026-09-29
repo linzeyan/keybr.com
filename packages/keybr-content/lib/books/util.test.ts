@@ -2,7 +2,12 @@ import { test } from "node:test";
 import { Layout, loadKeyboard } from "@keybr/keyboard";
 import { deepEqual, equal } from "rich-assert";
 import { Book } from "./book.ts";
-import { displayText, splitGlyphs, splitParagraph } from "./util.ts";
+import {
+  displayText,
+  removePunctuation,
+  splitGlyphs,
+  splitParagraph,
+} from "./util.ts";
 
 test("split glyphs", () => {
   // The punctuation of the keyboard is typed with its own key, the "……" and
@@ -32,6 +37,27 @@ test("split glyphs without typing the punctuation", () => {
     { text: "ㄊㄧㄢ ", glyph: "天，" },
     { text: "ㄨㄛˇ", glyph: "「我」。" },
   ]);
+});
+
+test("split glyphs of zhuyin without hanzi", () => {
+  // The Zhuyin of a custom text has no Hanzi to hide it, it shows itself,
+  // while the keys of a Hanzi stay hidden until its syllable ends.
+  deepEqual(splitGlyphs("ㄨㄛˇ 天ㄊㄧㄢ ㄉㄚˋ好ㄏㄠˇㄇㄚ˙", new Set()), [
+    { text: "ㄨㄛˇ " },
+    { text: "ㄊㄧㄢ ", glyph: "天" },
+    { text: "ㄉㄚˋ" },
+    { text: "ㄏㄠˇ", glyph: "好" },
+    { text: "ㄇㄚ˙" },
+  ]);
+});
+
+test("remove punctuation", () => {
+  // The space before a punctuation types the first tone of "親", the next
+  // word types it at the end of a paragraph.
+  equal(
+    removePunctuation("「我ㄨㄛˇ親ㄑㄧㄣ 。」……天ㄊㄧㄢ ，說ㄕㄨㄛ 。"),
+    "我ㄨㄛˇ親ㄑㄧㄣ 天ㄊㄧㄢ 說ㄕㄨㄛ",
+  );
 });
 
 test("split paragraph", () => {

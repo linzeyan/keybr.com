@@ -32,21 +32,22 @@ test("display the hanzi of a zhuyin book in place of their keys", () => {
   ]);
 });
 
-test("display the punctuation of a zhuyin book without typing it", () => {
+test("remove the punctuation of a zhuyin book", () => {
   const lesson = new BooksLesson(
     new Settings().set(lessonProps.books.lettersOnly, true),
     loadKeyboard(Layout.ZH_TW_DACHEN),
     new FakePhoneticModel(),
     {
       book: Book.ZH_TW_BAIHUA,
-      content: [["背影", ["我ㄨㄛˇ親ㄑㄧㄣ 。天ㄊㄧㄢ"]]],
+      content: [["背影", ["我ㄨㄛˇ親ㄑㄧㄣ 。天ㄊㄧㄢ ！"]]],
     },
   );
 
-  // "。" is still displayed, but only the space before it is typed.
+  // Neither typed nor displayed, but the space before it still types "親".
+  deepEqual(lesson.paragraphs, ["我ㄨㄛˇ親ㄑㄧㄣ 天ㄊㄧㄢ"]);
   deepEqual((lesson.generate() as unknown[]).slice(0, 4), [
     { text: "ㄨㄛˇ", glyph: "我" },
-    { text: "ㄑㄧㄣ ", glyph: "親。" },
+    { text: "ㄑㄧㄣ ", glyph: "親" },
     { text: "ㄊㄧㄢ ", glyph: "天" },
     { text: "ㄨㄛˇ", glyph: "我" },
   ]);

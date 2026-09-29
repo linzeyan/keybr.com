@@ -628,6 +628,9 @@ importers:
       '@keybr/unicode':
         specifier: workspace:*
         version: link:../keybr-unicode
+      '@keybr/zhuyin':
+        specifier: workspace:*
+        version: link:../keybr-zhuyin
       '@types/commonmark':
         specifier: ^0.27.10
         version: 0.27.10
@@ -731,6 +734,9 @@ importers:
       '@keybr/unicode':
         specifier: workspace:*
         version: link:../keybr-unicode
+      '@keybr/zhuyin':
+        specifier: workspace:*
+        version: link:../keybr-zhuyin
 
   packages/keybr-lesson-loader:
     dependencies:
@@ -764,6 +770,9 @@ importers:
       '@keybr/settings':
         specifier: workspace:*
         version: link:../keybr-settings
+      '@keybr/zhuyin':
+        specifier: workspace:*
+        version: link:../keybr-zhuyin
 
   packages/keybr-lesson-ui:
     dependencies:
@@ -1199,6 +1208,8 @@ importers:
       '@keybr/lang':
         specifier: workspace:*
         version: link:../keybr-lang
+
+  packages/keybr-zhuyin: {}
 
   packages/page-account:
     dependencies:

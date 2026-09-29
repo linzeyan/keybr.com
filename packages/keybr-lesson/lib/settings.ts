@@ -40,12 +40,13 @@ export const lessonProps = {
   customText: {
     content: stringProp(
       "lesson.customText.content",
-      "The quick brown fox jumps over the lazy dog.",
+      "燕子去了，有再來的時候；楊柳枯了，有再青的時候；桃花謝了，有再開的時候。",
       { maxLength: 10_000 },
     ),
     lettersOnly: booleanProp("lesson.customText.lettersOnly", true),
     lowercase: booleanProp("lesson.customText.lowercase", true),
     randomize: booleanProp("lesson.customText.randomize", false),
+    hanzi: booleanProp("lesson.customText.hanzi", true),
   } as const,
   numbers: {
     benford: booleanProp("lesson.numbers.benford", true),

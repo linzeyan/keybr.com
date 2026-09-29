@@ -10,6 +10,7 @@
     "@keybr/phonetic-model": "workspace:*",
     "@keybr/rand": "workspace:*",
     "@keybr/unicode": "workspace:*",
+    "@keybr/zhuyin": "workspace:*",
     "@types/commonmark": "^0.27.10",
     "chalk": "^6.0.0",
     "commonmark": "^0.31.2"

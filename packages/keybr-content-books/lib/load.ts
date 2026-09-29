@@ -34,6 +34,46 @@ export async function loadContent(book: Book): Promise<Content> {
           { with: { type: "json" } }
         )
       ).default as any;
+    case Book.ZH_TW_NAHAN:
+      return (
+        await import(
+          /* webpackChunkName: "book-zh-tw-nahan" */
+          "./data/zh-tw-nahan.json",
+          { with: { type: "json" } }
+        )
+      ).default as any;
+    case Book.ZH_TW_PANGHUANG:
+      return (
+        await import(
+          /* webpackChunkName: "book-zh-tw-panghuang" */
+          "./data/zh-tw-panghuang.json",
+          { with: { type: "json" } }
+        )
+      ).default as any;
+    case Book.ZH_TW_ZHAOHUA:
+      return (
+        await import(
+          /* webpackChunkName: "book-zh-tw-zhaohua" */
+          "./data/zh-tw-zhaohua.json",
+          { with: { type: "json" } }
+        )
+      ).default as any;
+    case Book.ZH_TW_XINSHI:
+      return (
+        await import(
+          /* webpackChunkName: "book-zh-tw-xinshi" */
+          "./data/zh-tw-xinshi.json",
+          { with: { type: "json" } }
+        )
+      ).default as any;
+    case Book.ZH_TW_CLASSICS:
+      return (
+        await import(
+          /* webpackChunkName: "book-zh-tw-classics" */
+          "./data/zh-tw-classics.json",
+          { with: { type: "json" } }
+        )
+      ).default as any;
     default:
       throw new Error();
   }

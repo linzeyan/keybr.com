@@ -15,15 +15,18 @@
  * The word list holds real phrases instead, so a first tone syllable inside
  * of a phrase keeps its space, as in "ㄐㄧㄣ ㄊㄧㄢ" for "今天".
  *
- * The book pairs every Hanzi with its keystrokes, as in "我ㄨㄛˇ們ㄇㄣ˙", so
- * that the Hanzi are displayed while their keys are typed. A punctuation is
- * typed with its own key of the layout, like in McBopomofo.
+ * The readings of every character and corpus phrase let the browser read the
+ * Hanzi of a custom text, and are used here to read the books. A book pairs
+ * every Hanzi with its keystrokes, as in "我ㄨㄛˇ們ㄇㄣ˙", so that the Hanzi
+ * are displayed while their keys are typed. A punctuation is typed with its
+ * own key of the layout, like in McBopomofo.
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 import { Language } from "@keybr/keyboard";
 import { XorShift128Plus } from "@keybr/rand";
+import { phraseScale, ZhuyinReader } from "@keybr/zhuyin";
 import chalk from "chalk";
 import { sortByCount, toCsv, type Word } from "./language/words.ts";
 import { pathTo } from "./root.ts";
@@ -33,8 +36,28 @@ const commit = "a5ad2e94a173d6721b9d52e60f4d0266251a76ba";
 const sampleSize = 3_000_000;
 const language = Language.ZH_TW;
 const toneMarks = new Set(["ˊ", "ˇ", "ˋ", "˙"]);
-// Lu Xun's "猹" is missing in McBopomofo, it is read like "查".
-const readAs = new Map([["猹", "查"]]);
+// The rare characters of the books missing in McBopomofo are read like a
+// common one, with their Unihan reading, or with the reading of the character
+// they stand for in the book when Unihan has none ("𧈢蜡" and "𤟹狨").
+const readAs = new Map([
+  ["猹", "查"],
+  ["嗬", "呵"],
+  ["唣", "皂"],
+  ["䯼", "敵"],
+  ["𡤫", "掐"],
+  ["𤛮", "勞"],
+  ["𤜱", "巴"],
+  ["𧈢", "蚱"],
+  ["𤟹", "禺"],
+]);
+const books = [
+  "zh-tw-baihua",
+  "zh-tw-nahan",
+  "zh-tw-panghuang",
+  "zh-tw-zhaohua",
+  "zh-tw-xinshi",
+  "zh-tw-classics",
+];
 
 const [base, heterophony, mappings, occ] = await Promise.all(
   ["BPMFBase.txt", "heterophony1.list", "BPMFMappings.txt", "phrase.occ"].map(
@@ -59,14 +82,10 @@ for (const [char, reading] of rows(base).sort(
   push(charReadings, char, reading);
 }
 const phraseReadings = new Map<string, string[]>();
-let maxPhraseLength = 1;
 for (const [phrase, ...syllables] of rows(mappings)) {
   push(phraseReadings, phrase, syllables.join(" "));
-  maxPhraseLength = Math.max(maxPhraseLength, [...phrase].length);
 }
 
-// McBopomofo scales the phrase counts to favor longer phrases.
-const phraseScale = (phrase: string) => 2.7 ** ([...phrase].length - 1);
 const occCounts = new Map<string, number>();
 let occNorm = 0;
 const phrases: { readonly keys: readonly string[]; readonly count: number }[] =
@@ -136,22 +155,63 @@ writeFileSync(
 );
 console.log(`[${language.id}] Generated word list (${words.size} words)`);
 
-// Chapter titles stay in Hanzi, only the paragraphs are typed.
-const book: [string, string[]][] = [];
-for (const line of readFileSync(pathTo("books/zh-tw-baihua.txt"), "utf-8")
-  .split("\n")
-  .filter((line) => line !== "")) {
-  if (line.startsWith("# ")) {
-    book.push([line.slice(2), []]);
-  } else {
-    book.at(-1)![1].push(toGlyphs(line));
+// A rare character still has a reading, a phrase must be in the corpus.
+const readingLines: string[] = [];
+const addReading = (phrase: string, reading: string, count: number) => {
+  const keys = toKeystrokes(reading);
+  // The reader splits the keys at the tone marks and first tone spaces.
+  if (!/^([^ˊˇˋ˙ ]+[ˊˇˋ˙ ])+$/u.test(keys)) {
+    throw new Error(`Bad reading "${reading}" of "${phrase}"`);
+  }
+  readingLines.push(`${phrase}\t${keys}\t${count}`);
+};
+for (const char of new Set([
+  ...primaryReadings.keys(),
+  ...charReadings.keys(),
+])) {
+  const reading = readingsOf(char)[0];
+  if (/^\p{Script=Han}$/u.test(char) && reading != null) {
+    addReading(char, reading, occCounts.get(char) ?? 0);
   }
 }
+for (const [char, as] of readAs) {
+  addReading(char, readingsOf(as)[0], 0);
+}
+for (const [phrase, count] of occCounts) {
+  const length = [...phrase].length;
+  const reading = readingsOf(phrase)[0];
+  if (length > 1 && reading?.split(" ").length === length) {
+    addReading(phrase, reading, count);
+  }
+}
+const readings = { norm: occNorm, phrases: readingLines.join("\n") };
 writeFileSync(
-  pathTo("../keybr-content-books/lib/data/zh-tw-baihua.json"),
-  JSON.stringify(book, null, 2),
+  pathTo("../keybr-zhuyin/lib/data/readings.json"),
+  JSON.stringify(readings, null, 2),
 );
-console.log(`[${language.id}] Generated book (${book.length} chapters)`);
+console.log(`[${language.id}] Generated ${readingLines.length} readings`);
+
+// Chapter titles stay in Hanzi, only the paragraphs are typed.
+const reader = new ZhuyinReader(readings);
+for (const id of books) {
+  const book: [string, string[]][] = [];
+  for (const line of readFileSync(pathTo(`books/${id}.txt`), "utf-8")
+    .split("\n")
+    .filter((line) => line !== "")) {
+    if (line.startsWith("# ")) {
+      book.push([line.slice(2), []]);
+    } else {
+      book.at(-1)![1].push(toGlyphs(line));
+    }
+  }
+  writeFileSync(
+    pathTo(`../keybr-content-books/lib/data/${id}.json`),
+    JSON.stringify(book, null, 2),
+  );
+  console.log(
+    `[${language.id}] Generated book ${id} (${book.length} chapters)`,
+  );
+}
 
 function readingsOf(phrase: string): string[] {
   return (
@@ -162,53 +222,23 @@ function readingsOf(phrase: string): string[] {
 }
 
 /**
- * Pairs every Hanzi with its keys. A punctuation stays as it is, so it is
- * typed after the space of a preceding first tone, as in "親ㄑㄧㄣ 。".
+ * Pairs every Hanzi of a book with its keys. A punctuation stays as it is,
+ * so it is typed after the space of a preceding first tone, as in "親ㄑㄧㄣ 。".
  */
 function toGlyphs(text: string): string {
-  return text
-    .replace(/\p{Script=Han}+/gu, (run) => {
-      const chars = [...run];
-      const syllables = readHan(chars.map((char) => readAs.get(char) ?? char));
-      return chars.map((char, i) => char + toKeystrokes(syllables[i])).join("");
-    })
-    .trimEnd();
-}
-
-/**
- * Reads a run of Han characters as its most likely sequence of phrases,
- * scored the way McBopomofo does, which picks the right reading of most
- * polyphonic characters. Returns a syllable per character.
- */
-function readHan(chars: readonly string[]): string[] {
-  // best[i] is the most likely reading of the first i characters.
-  const best: { score: number; syllables: string[] }[] = [
-    { score: 0, syllables: [] },
-  ];
-  for (let i = 1; i <= chars.length; i++) {
-    for (let n = 1; n <= Math.min(i, maxPhraseLength); n++) {
-      const phrase = chars.slice(i - n, i).join("");
-      // A rare character still has a reading, a phrase must be in the corpus.
-      const count = occCounts.get(phrase) ?? (n === 1 ? 0 : null);
-      const syllables = readingsOf(phrase)[0]?.split(" ");
-      if (count != null && syllables?.length === n) {
-        const p = (phraseScale(phrase) * Math.max(count, 0.5)) / occNorm;
-        const score = best[i - n].score + Math.log(p);
-        if (best[i] == null || score > best[i].score) {
-          best[i] = {
-            score,
-            syllables: [...best[i - n].syllables, ...syllables],
-          };
-        }
-      }
-    }
-    if (best[i] == null) {
-      throw new Error(
-        `No reading for "${chars[i - 1]}" in "${chars.join("")}"`,
-      );
-    }
+  // A space is a key, the words of a Latin title like "Sesame and Lilies"
+  // are only displayed.
+  text = text.replace(/(?<=[A-Za-z]) (?=[A-Za-z])/g, "\u00a0");
+  if (text.includes(" ")) {
+    throw new Error(`A space in "${text}"`);
   }
-  return best[chars.length].syllables;
+  const glyphs = reader.toGlyphs(text);
+  // Every syllable starts with a letter, a Hanzi without one has no reading.
+  const unread = /\p{Script=Han}(?!\p{Script=Bopomofo})/u.exec(glyphs);
+  if (unread != null) {
+    throw new Error(`No reading for "${unread[0]}" in "${text}"`);
+  }
+  return glyphs;
 }
 
 function toKeystrokes(reading: string): string {

@@ -1,9 +1,12 @@
 import { describe, it, test } from "node:test";
-import { Layout, loadKeyboard } from "@keybr/keyboard";
+import { Language, Layout, loadKeyboard } from "@keybr/keyboard";
 import { FakePhoneticModel } from "@keybr/phonetic-model";
+import { loadModelSync } from "@keybr/phonetic-model/lib/fs-load.ts";
+import { FakeRNGStream } from "@keybr/rand";
 import { makeKeyStatsMap } from "@keybr/result";
 import { Settings } from "@keybr/settings";
-import { deepEqual, equal, isNull } from "rich-assert";
+import { ZhuyinReader } from "@keybr/zhuyin";
+import { deepEqual, equal, isNull, match } from "rich-assert";
 import { CustomTextLesson } from "./customtext.ts";
 import { LessonKey } from "./key.ts";
 import { lessonProps } from "./settings.ts";
@@ -232,5 +235,84 @@ describe("generate randomized text using settings", () => {
       "Abc! AAA bbb Abc! AAA bbb Abc! AAA bbb Abc! AAA bbb Abc! AAA bbb Abc! " +
         "AAA bbb Abc! AAA bbb Abc! AAA bbb Abc! AAA bbb Abc! AAA bbb",
     );
+  });
+});
+
+describe("generate zhuyin text", () => {
+  const keyboard = loadKeyboard(Layout.ZH_TW_DACHEN);
+  const { model } = loadModelSync(Language.ZH_TW);
+  const rng = FakeRNGStream(1);
+  const reader = new ZhuyinReader({
+    norm: 1000,
+    phrases: [
+      "我\tㄨㄛˇ\t9",
+      "今\tㄐㄧㄣ \t9",
+      "天\tㄊㄧㄢ \t9",
+      "好\tㄏㄠˇ\t9",
+    ].join("\n"),
+  });
+  const settings = new Settings()
+    .set(lessonProps.customText.content, "我今天好。\n好")
+    .set(lessonProps.customText.randomize, false);
+
+  it("should display the hanzi in place of their keys", () => {
+    const lesson = new CustomTextLesson(
+      settings.set(lessonProps.customText.lettersOnly, false),
+      keyboard,
+      model,
+      reader,
+    );
+    const lessonKeys = lesson.update(makeKeyStatsMap(lesson.letters, []));
+
+    // A line break is a word break, the space joining the words types a
+    // first tone, or follows another tone.
+    deepEqual(lesson.wordList, [
+      "我ㄨㄛˇ今ㄐㄧㄣ",
+      "天ㄊㄧㄢ",
+      "好ㄏㄠˇ。",
+      "好ㄏㄠˇ",
+    ]);
+    deepEqual((lesson.generate(lessonKeys, rng) as unknown[]).slice(0, 6), [
+      { text: "ㄨㄛˇ", glyph: "我" },
+      { text: "ㄐㄧㄣ ", glyph: "今" },
+      { text: "ㄊㄧㄢ ", glyph: "天" },
+      { text: "ㄏㄠˇ", glyph: "好" },
+      { text: "。 ", glyph: "。" },
+      { text: "ㄏㄠˇ ", glyph: "好" },
+    ]);
+  });
+
+  it("should display the keys without the hanzi", () => {
+    const lesson = new CustomTextLesson(
+      settings
+        .set(lessonProps.customText.lettersOnly, true)
+        .set(lessonProps.customText.hanzi, false),
+      keyboard,
+      model,
+      reader,
+    );
+    const lessonKeys = lesson.update(makeKeyStatsMap(lesson.letters, []));
+
+    match(
+      lesson.generate(lessonKeys, rng) as string,
+      /^ㄨㄛˇㄐㄧㄣ ㄊㄧㄢ ㄏㄠˇ ㄏㄠˇ ㄨㄛˇ/u,
+    );
+  });
+
+  it("should display zhuyin typed in the text", () => {
+    const lesson = new CustomTextLesson(
+      settings.set(lessonProps.customText.content, "ㄨㄛˇ ㄏㄠˇ"),
+      keyboard,
+      model,
+    );
+    const lessonKeys = lesson.update(makeKeyStatsMap(lesson.letters, []));
+
+    // Without a Hanzi, the keys are not hidden behind a glyph.
+    const [first] = lesson.generate(lessonKeys, rng) as {
+      text: string;
+      glyph?: string;
+    }[];
+    equal(first.text.slice(0, 8), "ㄨㄛˇ ㄏㄠˇ ");
+    isNull(first.glyph ?? null);
   });
 });

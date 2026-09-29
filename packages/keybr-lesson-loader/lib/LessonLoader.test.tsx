@@ -7,8 +7,14 @@ import {
   Layout,
   loadKeyboard,
 } from "@keybr/keyboard";
-import { type BooksLesson, lessonProps, LessonType } from "@keybr/lesson";
+import {
+  type BooksLesson,
+  type CustomTextLesson,
+  lessonProps,
+  LessonType,
+} from "@keybr/lesson";
 import { FakePhoneticModel, type PhoneticModel } from "@keybr/phonetic-model";
+import { loadModelSync } from "@keybr/phonetic-model/lib/fs-load.ts";
 import { PhoneticModelLoader } from "@keybr/phonetic-model-loader";
 import { FakeSettingsContext, Settings } from "@keybr/settings";
 import { render } from "@testing-library/react";
@@ -55,6 +61,38 @@ test("replace the default english book for the zhuyin layout", async () => {
   );
 
   equal((await r.findByTitle("book")).textContent, Book.ZH_TW_BAIHUA.id);
+
+  r.unmount();
+});
+
+test("read the hanzi of a zhuyin custom text", async () => {
+  PhoneticModelLoader.loader = async () => loadModelSync(Language.ZH_TW).model;
+  const keyboard = loadKeyboard(Layout.ZH_TW_DACHEN);
+  const settings = new Settings()
+    .set(keyboardProps.language, Language.ZH_TW)
+    .set(keyboardProps.layout, Layout.ZH_TW_DACHEN)
+    .set(lessonProps.type, LessonType.CUSTOM)
+    .set(lessonProps.customText.content, "我今天很好。");
+
+  const r = render(
+    <FakeSettingsContext initialSettings={settings}>
+      <KeyboardContext.Provider value={keyboard}>
+        <LessonLoader>
+          {(lesson) => (
+            <span title="words">
+              {(lesson as CustomTextLesson).wordList.join("|")}
+            </span>
+          )}
+        </LessonLoader>
+      </KeyboardContext.Provider>
+    </FakeSettingsContext>,
+  );
+
+  // The Hanzi are not on the keyboard, they must be read to be typed.
+  equal(
+    (await r.findByTitle("words")).textContent,
+    "我ㄨㄛˇ今ㄐㄧㄣ|天ㄊㄧㄢ|很ㄏㄣˇ好ㄏㄠˇ",
+  );
 
   r.unmount();
 });

@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { Language } from "@keybr/keyboard";
 import { Attr, textDisplaySettings } from "@keybr/textinput";
 import { render } from "@testing-library/react";
 import { deepEqual, equal } from "rich-assert";
@@ -103,6 +104,33 @@ test("keep punctuation next to its hanzi", () => {
   );
 
   r.unmount();
+});
+
+test("keep punctuation next to its zhuyin keys", () => {
+  const chars = (text: string) =>
+    [...text].map((char) => ({
+      codePoint: char.codePointAt(0)!,
+      attrs: Attr.Normal,
+    }));
+  const items = (language: Language, text: string) => {
+    const r = render(
+      <TextLines
+        settings={{ ...textDisplaySettings, language }}
+        lines={{ text, lines: [{ text, chars: chars(text) }] }}
+        cursor={false}
+        focus={true}
+      />,
+    );
+    const items = [...r.container.querySelectorAll("div > span")].length;
+    r.unmount();
+    return items;
+  };
+
+  // The space before "：" types the first tone of "說", a line can wrap
+  // before "「" but not before "：".
+  equal(items(Language.ZH_TW, "ㄕㄨㄛ ：ㄨㄛˇ 「ㄒ"), 2);
+  // Latin text wraps at every space, as it always did.
+  equal(items(Language.EN, "say : me 'x"), 4);
 });
 
 test("render chars with line template", () => {

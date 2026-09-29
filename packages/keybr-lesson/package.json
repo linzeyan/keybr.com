@@ -16,7 +16,8 @@
     "@keybr/result": "workspace:*",
     "@keybr/settings": "workspace:*",
     "@keybr/textinput": "workspace:*",
-    "@keybr/unicode": "workspace:*"
+    "@keybr/unicode": "workspace:*",
+    "@keybr/zhuyin": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

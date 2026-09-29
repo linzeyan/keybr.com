@@ -15,7 +15,8 @@
     "@keybr/pages-shared": "workspace:*",
     "@keybr/phonetic-model": "workspace:*",
     "@keybr/phonetic-model-loader": "workspace:*",
-    "@keybr/settings": "workspace:*"
+    "@keybr/settings": "workspace:*",
+    "@keybr/zhuyin": "workspace:*"
   },
   "devDependencies": {},
   "scripts": {

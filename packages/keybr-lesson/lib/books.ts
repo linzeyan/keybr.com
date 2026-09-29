@@ -3,6 +3,7 @@ import {
   type BookContent,
   type Content,
   flattenContent,
+  removePunctuation,
   splitGlyphs,
   splitParagraph,
 } from "@keybr/content";
@@ -84,7 +85,10 @@ export class BooksLesson extends Lesson {
   #flattenContent(content: Content) {
     if (this.#zhuyin) {
       // The Hanzi are not typed, but they must stay to be displayed.
-      return flattenContent(content);
+      const paragraphs = flattenContent(content);
+      return this.settings.get(lessonProps.books.lettersOnly)
+        ? paragraphs.map(removePunctuation)
+        : paragraphs;
     }
     const lowercase = this.settings.get(lessonProps.books.lowercase);
     const codePoints = this.#codePoints();

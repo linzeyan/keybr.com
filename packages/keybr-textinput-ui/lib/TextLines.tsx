@@ -90,6 +90,7 @@ const TextLine = memo(
     let itemChars: Char[] = [];
     let ws = false;
     let glyph = "";
+    const zhuyin = settings.language.script === "bopomofo";
     for (let i = 0; i < chars.length; i++) {
       const char = chars[i];
       if (char.glyph) {
@@ -113,7 +114,15 @@ const TextLine = memo(
             break;
           default:
             if (ws) {
-              if (itemChars.length > 0) {
+              // Nor does a line of Zhuyin keys start with the punctuation
+              // typed after the space of a first tone, as in "ㄕㄨㄛ ：".
+              if (
+                itemChars.length > 0 &&
+                !(
+                  zhuyin &&
+                  noBreakBefore.test(String.fromCodePoint(char.codePoint))
+                )
+              ) {
                 items.push(itemChars);
                 itemChars = [];
               }

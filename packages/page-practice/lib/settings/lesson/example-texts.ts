@@ -3,75 +3,56 @@ export type ExampleText = {
   readonly content: string;
 };
 
-const jabberwocky: ExampleText = {
-  title: "Jabberwocky",
+const ouran: ExampleText = {
+  title: "徐志摩〈偶然〉",
   content:
-    "Jabberwocky\n" +
+    "我是天空裡的一片雲，偶爾投影在你的波心——你不必訝異，更無須歡喜——在轉瞬間消滅了蹤影。\n" +
     "\n" +
-    "'Twas brillig, and the slithy toves\n" +
-    "Did gyre and gimble in the wabe;\n" +
-    "All mimsy were the borogoves,\n" +
-    "And the mome raths outgrabe.\n" +
-    "\n" +
-    '"Beware the Jabberwock, my son!\n' +
-    "The jaws that bite, the claws that catch!\n" +
-    "Beware the Jubjub bird, and shun\n" +
-    'The frumious Bandersnatch!"\n' +
-    "\n" +
-    "He took his vorpal sword in hand:\n" +
-    "Long time the manxome foe he sought-\n" +
-    "So rested he by the Tumtum tree,\n" +
-    "And stood awhile in thought.\n" +
-    "\n" +
-    "And as in uffish thought he stood,\n" +
-    "The Jabberwock, with eyes of flame,\n" +
-    "Came whiffling through the tulgey wood,\n" +
-    "And burbled as it came!\n" +
-    "\n" +
-    "One, two! One, two! and through and through\n" +
-    "The vorpal blade went snicker-snack!\n" +
-    "He left it dead, and with its head\n" +
-    "He went galumphing back.\n" +
-    "\n" +
-    '"And hast thou slain the Jabberwock?\n' +
-    "Come to my arms, my beamish boy!\n" +
-    'O frabjous day! Callooh! Callay!"\n' +
-    "He chortled in his joy.\n" +
-    "\n" +
-    "'Twas brillig, and the slithy toves\n" +
-    "Did gyre and gimble in the wabe;\n" +
-    "All mimsy were the borogoves,\n" +
-    "And the mome raths outgrabe.",
+    "你我相逢在黑夜的海上，你有你的，我有我的，方向；你記得也好，最好你忘掉，在這交會時互放的光亮！",
 };
 
-const loremIpsum: ExampleText = {
-  title: "Lorem Ipsum",
+const congcong: ExampleText = {
+  title: "朱自清〈匆匆〉",
   content:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-    "Ut egestas libero non laoreet scelerisque. " +
-    "Mauris nec sodales velit. " +
-    "Quisque mattis eu nulla varius accumsan. " +
-    "Sed interdum erat eu justo sodales, vel hendrerit diam pretium. " +
-    "Phasellus lacus libero, scelerisque quis enim eget, tempus elementum massa. " +
-    "Aenean elementum nec magna at fringilla. " +
-    "Nam nisl eros, viverra et luctus eget, placerat non velit. " +
-    "Cras ante velit, mattis quis porttitor nec, pellentesque eu sem. " +
-    "Aenean blandit consectetur metus ut bibendum." +
-    "Aliquam in suscipit erat. " +
-    "Praesent non vulputate tortor, ac semper diam.",
+    "燕子去了，有再來的時候；楊柳枯了，有再青的時候；桃花謝了，有再開的時候。但是，聰明的，你告訴我，我們的日子為什麼一去不復返呢？——是有人偷了他們罷：那是誰？又藏在何處呢？是他們自己逃走了罷：現在又到了那裡呢？\n" +
+    "\n" +
+    "我不知道他們給了我多少日子；但我的手確乎是漸漸空虛了。在默默裡算著，八千多日子已經從我手中溜去；像針尖上一滴水滴在大海裡，我的日子滴在時間的流裡，沒有聲音，也沒有影子。我不禁頭涔涔而淚潸潸了。\n" +
+    "\n" +
+    "去的儘管去了，來的儘管來著；去來的中間，又怎樣地匆匆呢？早上我起來的時候，小屋裡射進兩三方斜斜的太陽。太陽他有腳啊，輕輕悄悄地挪移了；我也茫茫然跟著旋轉。於是——洗手的時候，日子從水盆裡過去；喫飯的時候，日子從飯碗裡過去；默默時，便從凝然的雙眼前過去。我覺察他去的匆匆了，伸出手遮挽時，他又從遮挽著的手邊過去，天黑時，我躺在床上，他便伶伶俐俐地從我身上跨過，從我腳邊飛去了。等我睜開眼和太陽再見，這算又溜走了一日。我掩著面嘆息。但是新來的日子的影兒又開始在嘆息裡閃過了。\n" +
+    "\n" +
+    "在逃去如飛的日子裡，在千門萬戶的世界裡的我能做些什麼呢？祇有徘徊罷了，祇有匆匆罷了；在八千多日的匆匆裡，除徘徊外，又賸些什麼呢？過去的日子如輕煙，被微風吹散了，如薄霧，被初陽蒸融了；我留著些什麼痕跡呢？我何曾留著像游絲樣的痕跡呢？我赤裸裸來到這世界，轉眼間也將赤裸裸的回去罷？但不能平的，為什麼偏要白白走這一遭啊？\n" +
+    "\n" +
+    "你聰明的，告訴我，我們的日子為甚麼一去不復返呢？",
 };
 
-const aShortStory: ExampleText = {
-  title: "A Short Story",
+const luohuasheng: ExampleText = {
+  title: "許地山〈落花生〉",
   content:
-    "Imagine all human beings swept off the face of the earth, excepting one man. " +
-    "Imagine this man in some vast city, New York or London. " +
-    "Imagine him on the third or fourth day of his solitude " +
-    "sitting in a house and hearing a ring at the door-bell!",
+    "我們屋後有半畝隙地。母親說：「讓他荒蕪著怪可惜，既然你們那麼愛吃花生，就闢來做花生園罷。」我們幾姊弟和幾個小丫頭都很喜歡——買種底買種，動土底動土，灌園底灌園；過不了幾個月，居然收穫了！\n" +
+    "\n" +
+    "媽媽說：「今晚我們可以做一個收穫節，也請你們爹爹來嘗嘗我們底新花生，如何？」我們都答應了。母親把花生做成好幾樣底食品，還吩咐這節期要在園裡底茅亭舉行。\n" +
+    "\n" +
+    "那晚上底天色不大好，可是爹爹也到來，實在很難得！爹爹說：「你們愛吃花生麼？」\n" +
+    "\n" +
+    "我們都爭著答應，「愛！」\n" +
+    "\n" +
+    "「誰能把花生底好處說出來？」\n" +
+    "\n" +
+    "姊姊說：「花生底氣味很美。」\n" +
+    "\n" +
+    "哥哥說：「花生可以製油。」\n" +
+    "\n" +
+    "我說：「無論何等人都可以用賤價買他來吃；都喜歡吃他。這就是他底好處。」\n" +
+    "\n" +
+    "爹爹說：「花生底用處固然很多；但有一樣是很可貴的。這小小的豆不像那好看的蘋果、桃子、石榴，把他們底果實懸在枝上，鮮紅嫩綠的顏色，令人一望而發生羨慕底心。他只把果子埋在地底，等到成熟，才容人把他挖出來，你們偶然看見一棵花生瑟縮地長在地上，不能立刻辨出他有沒有果實，非得等到你接觸他才能知道。」\n" +
+    "\n" +
+    "我們都說：「是的。」母親也點點頭。爹爹接下去說：「所以你們要像花生，因為他是有用的，不是偉大、好看的東西。」我說：「那麼，人要做有用的人，不要做偉大、體面的人了。」爹爹說：「這是我對於你們底希望。」\n" +
+    "\n" +
+    "我們談到夜闌才散。所有花生食品雖然沒有了，然而父親底話現在還印在我心版上。",
 };
 
 export const exampleTexts: readonly ExampleText[] = [
-  jabberwocky,
-  loremIpsum,
-  aShortStory,
+  ouran,
+  congcong,
+  luohuasheng,
 ];

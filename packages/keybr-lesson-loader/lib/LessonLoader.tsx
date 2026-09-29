@@ -18,6 +18,7 @@ import { LoadingProgress } from "@keybr/pages-shared";
 import { type PhoneticModel } from "@keybr/phonetic-model";
 import { PhoneticModelLoader } from "@keybr/phonetic-model-loader";
 import { useSettings } from "@keybr/settings";
+import { loadZhuyinReader } from "@keybr/zhuyin";
 import { type ReactNode, useEffect, useState } from "react";
 
 export function LessonLoader({
@@ -99,8 +100,15 @@ function useLoader(model: PhoneticModel): Lesson | null {
           break;
         }
         case LessonType.CUSTOM: {
+          const { language } = KeyboardOptions.from(settings);
+          const content = settings.get(lessonProps.customText.content);
+          // The readings are large, only a Zhuyin text with Hanzi needs them.
+          const reader =
+            language.script === "bopomofo" && /\p{Script=Han}/u.test(content)
+              ? await loadZhuyinReader()
+              : null;
           if (!didCancel) {
-            setResult(new CustomTextLesson(settings, keyboard, model));
+            setResult(new CustomTextLesson(settings, keyboard, model, reader));
           }
           break;
         }

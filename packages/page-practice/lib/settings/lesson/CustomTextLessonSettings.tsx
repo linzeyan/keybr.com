@@ -50,7 +50,9 @@ export function CustomTextLessonSettings({
           language={lesson.model.language}
           customText={settings.get(lessonProps.customText.content)}
         />
-        <CustomTextProcessing />
+        <CustomTextProcessing
+          zhuyin={lesson.model.language.script === "bopomofo"}
+        />
         <TargetSpeedProp />
         <LessonLengthProp />
       </FieldSet>
@@ -143,7 +145,11 @@ function CustomTextStats({
   );
 }
 
-function CustomTextProcessing(): ReactNode {
+function CustomTextProcessing({
+  zhuyin,
+}: {
+  readonly zhuyin: boolean;
+}): ReactNode {
   const { formatMessage } = useIntl();
   const { settings, updateSettings } = useSettings();
   return (
@@ -167,25 +173,46 @@ function CustomTextProcessing(): ReactNode {
           }}
         />
       </Field>
-      <Field>
-        <CheckBox
-          checked={settings.get(lessonProps.customText.lowercase)}
-          label={formatMessage({
-            id: "t_Transform_to_lowercase",
-            defaultMessage: "Transform to lowercase",
-          })}
-          title={formatMessage({
-            id: "settings.customTextLowercase.description",
-            defaultMessage:
-              "Transform all text to lower case to make it simpler to type.",
-          })}
-          onChange={(value) => {
-            updateSettings(
-              settings.set(lessonProps.customText.lowercase, value),
-            );
-          }}
-        />
-      </Field>
+      {/* Zhuyin has no letter case, but a text may display its Hanzi. */}
+      {zhuyin ? (
+        <Field>
+          <CheckBox
+            checked={settings.get(lessonProps.customText.hanzi)}
+            label={formatMessage({
+              id: "t_Display_Hanzi",
+              defaultMessage: "Display Hanzi",
+            })}
+            title={formatMessage({
+              id: "settings.customTextHanzi.description",
+              defaultMessage:
+                "Display the Hanzi of the text in place of their Zhuyin keys.",
+            })}
+            onChange={(value) => {
+              updateSettings(settings.set(lessonProps.customText.hanzi, value));
+            }}
+          />
+        </Field>
+      ) : (
+        <Field>
+          <CheckBox
+            checked={settings.get(lessonProps.customText.lowercase)}
+            label={formatMessage({
+              id: "t_Transform_to_lowercase",
+              defaultMessage: "Transform to lowercase",
+            })}
+            title={formatMessage({
+              id: "settings.customTextLowercase.description",
+              defaultMessage:
+                "Transform all text to lower case to make it simpler to type.",
+            })}
+            onChange={(value) => {
+              updateSettings(
+                settings.set(lessonProps.customText.lowercase, value),
+              );
+            }}
+          />
+        </Field>
+      )}
       <Field>
         <CheckBox
           checked={settings.get(lessonProps.customText.randomize)}

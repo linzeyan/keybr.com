@@ -120,13 +120,16 @@ The following license applies to major parts of the software.
 
 ## Books
 
-The texts of the book 白話文選, `packages/keybr-generators/books/zh-tw-baihua.txt`,
-are public domain works transcribed from Wikisource, <https://zh.wikisource.org/>:
+The texts of the books, `packages/keybr-generators/books/zh-tw-*.txt`, are public
+domain works transcribed from Wikisource, <https://zh.wikisource.org/>:
 
-- 朱自清：〈背影〉、〈匆匆〉、〈荷塘月色〉
-- 許地山：〈落花生〉
-- 胡適：〈差不多先生傳〉
-- 魯迅：〈一件小事〉、〈孔乙己〉、〈故鄉〉
+- 白話文選：朱自清〈背影〉、〈匆匆〉、〈荷塘月色〉，許地山〈落花生〉，胡適〈差不多先生傳〉
+- 吶喊、彷徨、朝花夕拾：魯迅，全書
+- 新詩與小說：徐志摩〈再別康橋〉、〈偶然〉、〈沙揚娜拉〉、〈我所知道的康橋〉，聞一多〈紅燭〉、〈死水〉，郁達夫〈春風沉醉的晚上〉
+- 古典小說選：吳承恩《西遊記》、曹雪芹《紅樓夢》、施耐庵《水滸傳》、吳敬梓《儒林外史》，各書前三回
+
+The example custom texts, `packages/page-practice/lib/settings/lesson/example-texts.ts`,
+are taken from the same works.
 
 ## Other
 
