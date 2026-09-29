@@ -16,7 +16,7 @@ import {
   TextField,
 } from "@keybr/widget";
 import { type ReactNode, useMemo } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedList, FormattedMessage, useIntl } from "react-intl";
 import { exampleTexts } from "./example-texts.ts";
 import { LessonLengthProp } from "./LessonLengthProp.tsx";
 import { TargetSpeedProp } from "./TargetSpeedProp.tsx";
@@ -67,10 +67,11 @@ function CustomTextInput(): ReactNode {
     <>
       <Para>
         <FormattedMessage id="t_Examples:" defaultMessage="Examples:" />{" "}
-        {exampleTexts.map(({ title, content }, index) => (
-          <span key={index}>
-            {index > 0 ? ", " : null}
+        <FormattedList
+          type="conjunction"
+          value={exampleTexts.map(({ title, content }, index) => (
             <LinkButton
+              key={index}
               onClick={() => {
                 updateSettings(
                   settings.set(lessonProps.customText.content, content),
@@ -79,8 +80,8 @@ function CustomTextInput(): ReactNode {
             >
               {title}
             </LinkButton>
-          </span>
-        ))}
+          ))}
+        />
       </Para>
       <Para>
         <TextField
