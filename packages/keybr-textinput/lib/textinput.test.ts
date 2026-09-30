@@ -341,6 +341,37 @@ test("forgive a replaced character", () => {
   isTrue(textInput.completed);
 });
 
+test("forgiven characters keep their glyphs", () => {
+  // A Hanzi is displayed only from the glyph of its typed keys, a forgiven
+  // key without it would be displayed as Zhuyin.
+  const textInput = new TextInput(
+    [
+      { text: "ab", glyph: "我" },
+      { text: "cd", glyph: "們" },
+    ],
+    {
+      stopOnError: true,
+      forgiveErrors: true,
+      spaceSkipsWords: true,
+    },
+  );
+  const glyphs = () => textInput.chars.map(({ glyph }) => glyph);
+
+  // A replaced character.
+  textInput.appendChar(100, X, 101);
+  textInput.appendChar(200, B, 102);
+  textInput.appendChar(300, C, 103);
+  equal(textInput.appendChar(400, D, 104), Feedback.Recovered);
+  deepEqual(glyphs(), ["我", "", "們", ""]);
+
+  // A skipped character.
+  textInput.reset();
+  textInput.appendChar(100, B, 101);
+  textInput.appendChar(200, C, 102);
+  equal(textInput.appendChar(300, D, 103), Feedback.Recovered);
+  deepEqual(glyphs(), ["我", "", "們", ""]);
+});
+
 test("ignore the whitespace key", () => {
   const textInput = new TextInput("abc", {
     stopOnError: true,

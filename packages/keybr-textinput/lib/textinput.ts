@@ -300,9 +300,10 @@ export class TextInput {
       this.at(this.pos),
     );
 
-    // Append successful steps.
+    // Append successful steps. The text chars, not the garbage ones, keep
+    // the glyph and the class of what was typed.
     for (let i = 1; i < this.#garbage.length; i++) {
-      this.#addStep(this.#garbage[i], this.#garbage[i].char);
+      this.#addStep(this.#garbage[i], this.at(this.pos));
     }
 
     this.#garbage = [];
@@ -344,7 +345,7 @@ export class TextInput {
 
     // Append successful steps.
     for (let i = 0; i < this.#garbage.length; i++) {
-      this.#addStep(this.#garbage[i], this.#garbage[i].char);
+      this.#addStep(this.#garbage[i], this.at(this.pos));
     }
 
     this.#garbage = [];
