@@ -6,6 +6,7 @@ import {
   xitemProp,
 } from "@keybr/settings";
 import { Geometry, ZoneMod } from "./geometry.ts";
+import { Ime } from "./ime.ts";
 import { Language } from "./language.ts";
 import { Layout } from "./layout.ts";
 import { nullMod } from "./mod.ts";
@@ -35,6 +36,7 @@ export const keyboardProps = {
   layout: xitemProp("keyboard.layout", Layout.ALL, Layout.ZH_TW_DACHEN),
   geometry: itemProp("keyboard.geometry", Geometry.ALL, Geometry.ANSI_101),
   zones: itemProp("keyboard.zones", ZoneMod.ALL, ZoneMod.STANDARD),
+  ime: itemProp("keyboard.ime", Ime.ALL, Ime.CHEWING),
   emulation: enumProp("keyboard.emulation", Emulation, Emulation.Forward),
   colors: booleanProp("keyboard.colors", true),
   pointers: booleanProp("keyboard.pointers", true),
@@ -47,6 +49,7 @@ export class KeyboardOptions {
       Layout.ZH_TW_DACHEN,
       Geometry.ANSI_101,
       ZoneMod.STANDARD,
+      Ime.CHEWING,
     );
   }
 
@@ -55,28 +58,33 @@ export class KeyboardOptions {
     const layout = settings.get(keyboardProps.layout);
     const geometry = settings.get(keyboardProps.geometry);
     const zones = settings.get(keyboardProps.zones);
+    const ime = settings.get(keyboardProps.ime);
     return KeyboardOptions.default()
       .withLanguage(language)
       .withLayout(layout)
       .withGeometry(geometry)
-      .withZones(zones);
+      .withZones(zones)
+      .withIme(ime);
   }
 
   readonly #language: Language;
   readonly #layout: Layout;
   readonly #geometry: Geometry;
   readonly #zones: ZoneMod;
+  readonly #ime: Ime;
 
   private constructor(
     language: Language,
     layout: Layout,
     geometry: Geometry,
     zones: ZoneMod,
+    ime: Ime,
   ) {
     this.#language = language;
     this.#layout = layout;
     this.#geometry = geometry;
     this.#zones = zones;
+    this.#ime = ime;
   }
 
   get language(): Language {
@@ -93,6 +101,11 @@ export class KeyboardOptions {
 
   get zones(): ZoneMod {
     return this.#zones;
+  }
+
+  /** The input method, which decides the punctuation keys of a Zhuyin layout. */
+  get ime(): Ime {
+    return this.#ime;
   }
 
   selectableLanguages(): Language[] {
@@ -123,6 +136,7 @@ export class KeyboardOptions {
       layout,
       geometry,
       zones,
+      this.#ime,
     );
   }
 
@@ -135,6 +149,7 @@ export class KeyboardOptions {
         layout,
         geometry,
         zones,
+        this.#ime,
       );
     } else {
       return this;
@@ -149,6 +164,7 @@ export class KeyboardOptions {
         this.#layout,
         geometry,
         zones,
+        this.#ime,
       );
     } else {
       return this;
@@ -165,10 +181,21 @@ export class KeyboardOptions {
         this.#layout,
         this.#geometry,
         zones,
+        this.#ime,
       );
     } else {
       return this;
     }
+  }
+
+  withIme(ime: Ime): KeyboardOptions {
+    return new KeyboardOptions(
+      this.#language,
+      this.#layout,
+      this.#geometry,
+      this.#zones,
+      ime,
+    );
   }
 
   save(settings: Settings): Settings {
@@ -176,6 +203,7 @@ export class KeyboardOptions {
       .set(keyboardProps.language, this.#language)
       .set(keyboardProps.layout, this.#layout)
       .set(keyboardProps.geometry, this.#geometry)
-      .set(keyboardProps.zones, this.#zones);
+      .set(keyboardProps.zones, this.#zones)
+      .set(keyboardProps.ime, this.#ime);
   }
 }

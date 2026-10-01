@@ -2,6 +2,7 @@ import { useCollator } from "@keybr/intl";
 import {
   Emulation,
   Geometry,
+  Ime,
   KeyboardOptions,
   keyboardProps,
   Language,
@@ -114,6 +115,40 @@ function LayoutProp(): ReactNode {
           />
         </Field>
       </FieldList>
+      {options.layout === Layout.ZH_TW_DACHEN && (
+        <>
+          <FieldList>
+            <Field>
+              <FormattedMessage
+                id="t_Input_method:"
+                defaultMessage="Input method:"
+              />
+            </Field>
+            <Field>
+              <OptionList
+                options={Ime.ALL.map((item) => ({
+                  value: item.id,
+                  name: formatMessage(item.name),
+                }))}
+                value={options.ime.id}
+                onSelect={(id) => {
+                  updateSettings(
+                    options.withIme(Ime.ALL.get(id)).save(settings),
+                  );
+                }}
+              />
+            </Field>
+          </FieldList>
+          <Explainer>
+            <Description>
+              <FormattedMessage
+                id="keyboard.ime.description"
+                defaultMessage="Type the punctuation with the keys of your input method. The punctuation that it picks from a list of candidates is displayed but not typed."
+              />
+            </Description>
+          </Explainer>
+        </>
+      )}
       <FieldList>
         <Field>
           <CheckBox

@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { Ime, KeyboardOptions, loadKeyboard } from "@keybr/keyboard";
 import { Attr, textDisplaySettings } from "@keybr/textinput";
 import { deepEqual } from "rich-assert";
 import { renderChars } from "./chars.tsx";
@@ -204,6 +205,26 @@ test("render glyph chars", () => {
       </span>,
     ],
   );
+});
+
+test("hint at the key combo of a missed punctuation", () => {
+  // The punctuation keys depend on the input method, the hint names the US
+  // key caps. Only the glyph under the cursor has a hint.
+  const hints = (ime: Ime) =>
+    renderChars(
+      textDisplaySettings,
+      [
+        {
+          codePoint: /* "，" */ 0xff0c,
+          attrs: Attr.Cursor | Attr.Miss,
+          glyph: "，",
+        },
+        { codePoint: /* "、" */ 0x3001, attrs: Attr.Miss, glyph: "、" },
+      ],
+      loadKeyboard(KeyboardOptions.default().withIme(ime)),
+    ).map((node: any) => node.props["data-hint"]);
+  deepEqual(hints(Ime.CHEWING), ["⇧,", undefined]);
+  deepEqual(hints(Ime.MICROSOFT), ["Ctrl+,", undefined]);
 });
 
 test("render special chars", () => {

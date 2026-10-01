@@ -31,6 +31,8 @@ export class KeyCharacters {
   readonly b: Character | null;
   readonly c: Character | null;
   readonly d: Character | null;
+  readonly e: Character | null;
+  readonly f: Character | null;
 
   constructor(
     id: KeyId,
@@ -38,12 +40,16 @@ export class KeyCharacters {
     b: Character | null,
     c: Character | null,
     d: Character | null,
+    e: Character | null = null,
+    f: Character | null = null,
   ) {
     this.id = id;
     this.a = a || null;
     this.b = b || null;
     this.c = c || null;
     this.d = d || null;
+    this.e = e || null;
+    this.f = f || null;
   }
 
   getCodePoint(modifier: KeyModifier): CodePoint | null {
@@ -56,13 +62,18 @@ export class KeyCharacters {
         return select(this.c, this.b, this.a);
       case KeyModifier.ShiftAlt:
         return select(this.d, this.c, this.b, this.a);
+      // Any other control key combo is a shortcut.
+      case KeyModifier.Ctrl:
+        return select(this.e);
+      case KeyModifier.ShiftCtrl:
+        return select(this.f);
       default:
         throw new Error();
     }
   }
 
   get valid() {
-    return Boolean(this.a || this.b || this.c || this.d);
+    return Boolean(this.a || this.b || this.c || this.d || this.e || this.f);
   }
 }
 

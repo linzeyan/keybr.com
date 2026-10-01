@@ -88,6 +88,24 @@ function pointers(keyboard: Keyboard, combo: KeyCombo | null): ReactNode[] {
             break;
         }
       }
+      if (combo.modifier.ctrl) {
+        const l = keyboard.getShape("ControlLeft");
+        const r = keyboard.getShape("ControlRight");
+        switch (shape.hand) {
+          case "left":
+            children.unshift(pointer(r, styles.modifierPointer));
+            break;
+          case "right":
+            children.unshift(pointer(l, styles.modifierPointer));
+            break;
+          default:
+            children.unshift(
+              pointer(l, styles.modifierPointer),
+              pointer(r, styles.modifierPointer),
+            );
+            break;
+        }
+      }
     }
     combo = combo.prefix;
   }

@@ -1,5 +1,5 @@
 import { test } from "node:test";
-import { Layout, loadKeyboard } from "@keybr/keyboard";
+import { Ime, KeyboardOptions, loadKeyboard } from "@keybr/keyboard";
 import { deepEqual, equal } from "rich-assert";
 import { Book } from "./book.ts";
 import {
@@ -10,12 +10,15 @@ import {
 } from "./util.ts";
 
 test("split glyphs", () => {
-  // The punctuation of the keyboard is typed with its own key, the "……" and
-  // the "S" without a key are displayed with a neighbouring Hanzi.
+  // The punctuation of the input method is typed with its own key, the "……"
+  // that McBopomofo picks from a list and the "S" without a key are displayed
+  // with a neighbouring Hanzi.
   deepEqual(
     splitGlyphs(
       "「我ㄨㄛˇ親ㄑㄧㄣ 。天ㄊㄧㄢ 了ㄌㄜ˙……S會ㄏㄨㄟˋ；",
-      loadKeyboard(Layout.ZH_TW_DACHEN).getCodePoints(),
+      loadKeyboard(
+        KeyboardOptions.default().withIme(Ime.MCBOPOMOFO),
+      ).getCodePoints(),
     ),
     [
       { text: "「", glyph: "「" },

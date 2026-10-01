@@ -6,8 +6,23 @@ export class KeyModifier {
     /* shift= */ true,
     /* alt= */ true,
   );
+  // An input method like Microsoft Bopomofo types the punctuation with the
+  // control key.
+  static readonly Ctrl = new KeyModifier(
+    /* shift= */ false,
+    /* alt= */ false,
+    /* ctrl= */ true,
+  );
+  static readonly ShiftCtrl = new KeyModifier(
+    /* shift= */ true,
+    /* alt= */ false,
+    /* ctrl= */ true,
+  );
 
-  static from(shift: boolean, alt: boolean) {
+  static from(shift: boolean, alt: boolean, ctrl = false) {
+    if (ctrl) {
+      return shift ? KeyModifier.ShiftCtrl : KeyModifier.Ctrl;
+    }
     if (shift && alt) {
       return KeyModifier.ShiftAlt;
     }
@@ -22,21 +37,13 @@ export class KeyModifier {
 
   readonly shift: boolean;
   readonly alt: boolean;
+  readonly ctrl: boolean;
   readonly complexity: number;
 
-  private constructor(shift: boolean, alt: boolean) {
+  private constructor(shift: boolean, alt: boolean, ctrl = false) {
     this.shift = shift;
     this.alt = alt;
-    this.complexity = complexityOf(shift, alt);
+    this.ctrl = ctrl;
+    this.complexity = Number(shift) + Number(alt) + Number(ctrl);
   }
-}
-
-function complexityOf(shift: boolean, alt: boolean): number {
-  if (shift && alt) {
-    return 2;
-  }
-  if (shift || alt) {
-    return 1;
-  }
-  return 0;
 }

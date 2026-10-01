@@ -1,5 +1,5 @@
 import { test } from "node:test";
-import { Emulation, keyboardProps, Layout, loadKeyboard } from "@keybr/keyboard";
+import { Emulation, Ime, KeyboardOptions, keyboardProps, Layout, loadKeyboard } from "@keybr/keyboard";
 import { Settings } from "@keybr/settings";
 import { deepEqual } from "rich-assert";
 import { emulateLayout } from "./emulation.ts";
@@ -43,6 +43,36 @@ test("forward emulation, translate a character input", () => {
     "600,appendChar,O,300",
     "700,keyup,KeyS,O",
     "800,keyup,ShiftLeft,Shift",
+  ]);
+});
+
+test("forward emulation, translate a punctuation typed with the control key", () => {
+  // Arrange.
+
+  const target = tracingListener();
+  const listener = emulateLayout(
+    new Settings().set(keyboardProps.emulation, Emulation.Forward),
+    loadKeyboard(KeyboardOptions.default().withIme(Ime.MICROSOFT)),
+    target,
+  );
+
+  // Act.
+
+  replay(
+    listener,
+    { timeStamp: 100, type: "keydown", code: "Comma", key: ",", modifiers: ["Control"] },
+    { timeStamp: 200, type: "keydown", code: "KeyS", key: "s", modifiers: ["Control"] },
+    { timeStamp: 300, type: "keydown", code: "Comma", key: ",", modifiers: ["Control", "Alt", "AltGraph"] },
+  );
+
+  // Assert.
+
+  // Any other control key combo is a shortcut, so is the AltGr key.
+  deepEqual(target.trace, [
+    "100,keydown,Comma,，",
+    "100,appendChar,，,100",
+    "200,keydown,KeyS,ㄋ",
+    "300,keydown,Comma,ㄝ",
   ]);
 });
 

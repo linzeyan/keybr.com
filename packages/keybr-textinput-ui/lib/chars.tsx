@@ -1,4 +1,11 @@
 import {
+  type Keyboard,
+  KeyCharacters,
+  type KeyId,
+  Layout,
+  loadKeyboard,
+} from "@keybr/keyboard";
+import {
   Attr,
   type Char,
   type TextDisplaySettings,
@@ -10,9 +17,14 @@ import { type ReactNode } from "react";
 import * as styles from "./chars.module.less";
 import { getTextStyle } from "./styles.ts";
 
+/**
+ * Renders the chars of a text. The keyboard, if any, tells how to type a
+ * punctuation glyph.
+ */
 export function renderChars(
   settings: TextDisplaySettings,
   chars: readonly Char[],
+  keyboard: Keyboard | null = null,
 ): ReactNode[] {
   const nodes: ReactNode[] = [];
   type Span = { chars: CodePoint[]; attrs: number; cls: string | null };
@@ -36,7 +48,7 @@ export function renderChars(
     if (glyph != null) {
       if (glyph !== "") {
         pushSpan({ chars: [], attrs, cls });
-        const { attrs: glyphAttrs, hint } = glyphState(chars, i);
+        const { attrs: glyphAttrs, hint } = glyphState(chars, i, keyboard);
         const glyphSpan = { attrs: glyphAttrs, cls };
         nodes.push(
           <span
@@ -75,11 +87,12 @@ export function renderChars(
  * Returns the state of a glyph from all of its chars, which may be
  * interleaved with the garbage chars typed before the cursor. After a miss,
  * the keys of a glyph like a Hanzi are its hint until it is typed, while a
- * punctuation has none.
+ * punctuation, which is its own key, hints at the key combo that types it.
  */
 function glyphState(
   chars: readonly Char[],
   start: number,
+  keyboard: Keyboard | null,
 ): { readonly attrs: Attr; readonly hint?: string } {
   const glyph = chars[start].glyph!;
   let keys = "";
@@ -98,10 +111,13 @@ function glyphState(
       hit &&= (char.attrs & (Attr.Hit | Attr.Miss)) !== 0;
     }
   }
-  const hint = [...keys]
+  let hint = [...keys]
     .filter((key) => !glyph.includes(key))
     .join("")
     .trim();
+  if (hint === "" && keyboard != null) {
+    hint = [...keys.trim()].map((key) => comboHint(keyboard, key)).join("");
+  }
   return {
     attrs: cursor
       ? Attr.Cursor
@@ -112,6 +128,26 @@ function glyphState(
           : Attr.Normal,
     hint: cursor && miss && hint !== "" ? hint : undefined,
   };
+}
+
+let usKeyboard: Keyboard | null = null;
+
+/**
+ * Returns the key combo that types a char, as in "⇧," for "，", named by the
+ * US key caps, which every keyboard in Taiwan has.
+ */
+function comboHint(keyboard: Keyboard, char: string): string {
+  const combo = keyboard.getCombo(char.codePointAt(0)!);
+  const label = combo != null ? keyLabel(combo.id) : null;
+  return combo != null && label != null
+    ? (combo.modifier.ctrl ? "Ctrl+" : "") + (combo.shift ? "⇧" : "") + label
+    : "";
+}
+
+function keyLabel(id: KeyId): string | null {
+  usKeyboard ??= loadKeyboard(Layout.EN_US);
+  const a = usKeyboard.getCharacters(id)?.a;
+  return KeyCharacters.isCodePoint(a) ? String.fromCodePoint(a) : null;
 }
 
 function specialChar(whitespaceStyle: WhitespaceStyle, codePoint: CodePoint) {

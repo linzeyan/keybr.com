@@ -2,6 +2,7 @@ export * from "./context.tsx";
 export * from "./fakes.ts";
 export * from "./filter.ts";
 export * from "./geometry.ts";
+export * from "./ime.ts";
 export * from "./keyboard.ts";
 export * from "./keycharacters.ts";
 export * from "./keycombo.ts";

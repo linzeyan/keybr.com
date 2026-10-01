@@ -49,7 +49,7 @@ function forwardEmulation(
       timeToType.add(event);
       const [mapped, codePoint] = fixKey(keyboard, event);
       target.onKeyDown(mapped);
-      if (isTextInput(event.modifiers) && codePoint > 0x0000) {
+      if (codePoint > 0x0000) {
         target.onInput({
           type: "input",
           timeStamp: mapped.timeStamp,
@@ -105,7 +105,9 @@ function reverseEmulation(
 }
 
 /**
- * Changes the character code using a physical key location.
+ * Changes the character code using a physical key location. Returns the typed
+ * character, if any, which includes a punctuation that an input method types
+ * with the control key, any other control key combo is a shortcut.
  */
 function fixKey(
   keyboard: Keyboard,
@@ -114,11 +116,29 @@ function fixKey(
   let codePoint = 0x0000;
   const characters = keyboard.getCharacters(code);
   if (characters != null) {
-    key = String.fromCodePoint(
-      (codePoint = characters.getCodePoint(toKeyModifier(modifiers)) ?? 0x0000),
-    );
+    const ctrl = isCtrlInput(modifiers)
+      ? characters.getCodePoint(
+          KeyModifier.from(modifiers.includes("Shift"), false, true),
+        )
+      : null;
+    const character =
+      ctrl ?? characters.getCodePoint(toKeyModifier(modifiers)) ?? 0x0000;
+    key = String.fromCodePoint(character);
+    if (ctrl != null || isTextInput(modifiers)) {
+      codePoint = character;
+    }
   }
   return [{ type, timeStamp, code, key, modifiers }, codePoint];
+}
+
+function isCtrlInput(modifiers: readonly ModifierId[]): boolean {
+  // The AltGr key of Windows is reported as Ctrl+Alt.
+  return (
+    modifiers.includes("Control") &&
+    !modifiers.includes("Alt") &&
+    !modifiers.includes("AltGraph") &&
+    !modifiers.includes("Meta")
+  );
 }
 
 /**

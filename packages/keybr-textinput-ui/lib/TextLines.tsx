@@ -1,3 +1,4 @@
+import { KeyboardContext } from "@keybr/keyboard";
 import {
   type Char,
   charArraysAreEqual,
@@ -12,6 +13,7 @@ import {
   type CSSProperties,
   memo,
   type ReactNode,
+  useContext,
 } from "react";
 import { renderChars } from "./chars.tsx";
 import { Cursor } from "./Cursor.tsx";
@@ -163,13 +165,15 @@ const TextItem = memo(
     readonly settings: TextDisplaySettings;
     readonly chars: readonly Char[];
   }): ReactNode {
+    // Missing outside of a lesson, like in a preview.
+    const keyboard = useContext(KeyboardContext);
     return (
       <span
         style={
           chars.some(({ glyph }) => glyph) ? glyphItemStyle : textItemStyle
         }
       >
-        {renderChars(settings, chars)}
+        {renderChars(settings, chars, keyboard)}
       </span>
     );
   },

@@ -10,6 +10,7 @@ import { JAPANESE_106_FULL } from "./geometry/japanese_106_full.ts";
 import { KOREAN_103 } from "./geometry/korean_103.ts";
 import { KOREAN_103_FULL } from "./geometry/korean_103_full.ts";
 import { MATRIX } from "./geometry/matrix.ts";
+import { Ime } from "./ime.ts";
 import { Keyboard } from "./keyboard.ts";
 import { Layout } from "./layout.ts";
 import { LAYOUT_EN_APTV3 } from "./layout/en_aptv3.ts";
@@ -121,7 +122,12 @@ export function loadKeyboard(...args: any[]): Keyboard {
   const { length } = args;
   let options: KeyboardOptions;
   if (length === 1 && (options = args[0]) instanceof KeyboardOptions) {
-    return loadImpl(options.layout, options.geometry, options.zones);
+    return loadImpl(
+      options.layout,
+      options.geometry,
+      options.zones,
+      options.ime,
+    );
   }
   let layout: Layout;
   if (length === 1 && (layout = args[0]) instanceof Layout) {
@@ -142,8 +148,12 @@ function loadImpl(
   layout: Layout,
   geometry: Geometry = Geometry.first(layout.geometries),
   zones: ZoneMod = ZoneMod.first(geometry.zones),
+  ime: Ime = Ime.CHEWING,
 ): Keyboard {
   let characterDict = layouts.get(layout)!;
+  if (layout === Layout.ZH_TW_DACHEN) {
+    characterDict = ime.withPunctuation(characterDict);
+  }
   let geometryDict = geometries.get(geometry)!;
   if (layout.mod === nullMod && zones !== ZoneMod.STANDARD) {
     geometryDict = remapZones(geometryDict, zones.mod);

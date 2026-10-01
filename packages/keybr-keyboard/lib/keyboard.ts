@@ -33,13 +33,14 @@ export class Keyboard {
     const shapes = new Map<KeyId, KeyShape>();
     const zones = new Map<ZoneId, KeyShape[]>();
 
-    for (const [id, [a = null, b = null, c = null, d = null]] of Object.entries(
-      characterDict,
-    )) {
-      characters.set(id, new KeyCharacters(id, a, b, c, d));
+    for (const [
+      id,
+      [a = null, b = null, c = null, d = null, e = null, f = null],
+    ] of Object.entries(characterDict)) {
+      characters.set(id, new KeyCharacters(id, a, b, c, d, e, f));
     }
 
-    for (const { id, a, b, c, d } of characters.values()) {
+    for (const { id, a, b, c, d, e, f } of characters.values()) {
       if (KeyCharacters.isCodePoint(a)) {
         addCombo(combos, a, id, KeyModifier.None);
       }
@@ -51,6 +52,12 @@ export class Keyboard {
       }
       if (KeyCharacters.isCodePoint(d)) {
         addCombo(combos, d, id, KeyModifier.ShiftAlt);
+      }
+      if (KeyCharacters.isCodePoint(e)) {
+        addCombo(combos, e, id, KeyModifier.Ctrl);
+      }
+      if (KeyCharacters.isCodePoint(f)) {
+        addCombo(combos, f, id, KeyModifier.ShiftCtrl);
       }
     }
 
