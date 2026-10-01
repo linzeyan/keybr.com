@@ -31,6 +31,34 @@ test("display a character without a reading", () => {
   equal(reader.toGlyphs("ㄅ S"), "ㄅ S");
 });
 
+test("pronounce the tone sandhi of 一 and 不", () => {
+  const reader = new ZhuyinReader({
+    norm: 1000,
+    phrases: [
+      "一\tㄧ \t10",
+      "不\tㄅㄨˋ\t10",
+      "十\tㄕˊ\t10",
+      "是\tㄕˋ\t10",
+      "好\tㄏㄠˇ\t10",
+      "天\tㄊㄧㄢ \t10",
+      "夜\tㄧㄝˋ\t10",
+      "統一\tㄊㄨㄥˇㄧ \t10",
+      "這一\tㄓㄜˋㄧ \t10",
+    ].join("\n"),
+  });
+  equal(reader.toGlyphs("不是不好"), "不ㄅㄨˊ是ㄕˋ不ㄅㄨˋ好ㄏㄠˇ");
+  equal(reader.toGlyphs("一夜一天"), "一ㄧˊ夜ㄧㄝˋ一ㄧˋ天ㄊㄧㄢ");
+  // A word ending with "一" and a number keep its tone, but not a count.
+  equal(reader.toGlyphs("統一天"), "統ㄊㄨㄥˇ一ㄧ 天ㄊㄧㄢ");
+  equal(reader.toGlyphs("十一天"), "十ㄕˊ一ㄧ 天ㄊㄧㄢ");
+  equal(reader.toGlyphs("這一夜"), "這ㄓㄜˋ一ㄧˊ夜ㄧㄝˋ");
+});
+
+test("force the reading of a character", () => {
+  // A book fixes a character that its phrases read wrong in the context.
+  equal(reader.toGlyphs("銀行", new Map([[1, "ㄒㄧㄥˊ"]])), "銀ㄧㄣˊ行ㄒㄧㄥˊ");
+});
+
 test("read the text of a custom lesson", async () => {
   const reader = await loadZhuyinReader();
   equal(
@@ -41,4 +69,6 @@ test("read the text of a custom lesson", async () => {
   equal(reader.toGlyphs("銀行"), "銀ㄧㄣˊ行ㄏㄤˊ");
   equal(reader.toGlyphs("行走"), "行ㄒㄧㄥˊ走ㄗㄡˇ");
   equal(reader.toGlyphs("這"), "這ㄓㄜˋ");
+  // McBopomofo also accepts the colloquial "ㄗㄜˇㄇㄛ˙", in no special order.
+  equal(reader.toGlyphs("他們怎麼了"), "他ㄊㄚ 們ㄇㄣ˙怎ㄗㄣˇ麼ㄇㄜ˙了ㄌㄜ˙");
 });

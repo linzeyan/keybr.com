@@ -15,6 +15,38 @@ export function phraseScale(phrase: string): number {
   return 2.7 ** ([...phrase].length - 1);
 }
 
+/** Returns the tone of a syllable's keys, 0 for the neutral tone or none. */
+export function toneOf(keys: string): number {
+  return " ˊˇˋ".indexOf(keys.at(-1) ?? "˙") + 1;
+}
+
+/**
+ * Returns the keys of "一" or "不" at the given index as they are pronounced
+ * before a syllable of the given tone, or null for any other character.
+ * "不" becomes ㄅㄨˊ before a fourth tone, "一" becomes ㄧˊ before a fourth
+ * tone and ㄧˋ before the other tones, but a digit of a number keeps ㄧ.
+ */
+export function sandhi(
+  chars: readonly string[],
+  i: number,
+  nextTone: number,
+): string | null {
+  switch (chars[i]) {
+    case "不":
+      return nextTone === 4 ? "ㄅㄨˊ" : "ㄅㄨˋ";
+    case "一":
+      if (
+        "第初〇零一二三四五六七八九十".includes(chars[i - 1] ?? "_") ||
+        "〇零一二三四五六七八九".includes(chars[i + 1] ?? "_")
+      ) {
+        return "ㄧ ";
+      }
+      return nextTone === 4 ? "ㄧˊ" : nextTone > 0 ? "ㄧˋ" : "ㄧ ";
+    default:
+      return null;
+  }
+}
+
 type Phrase = {
   readonly keys: string;
   readonly score: number;
@@ -49,20 +81,33 @@ export class ZhuyinReader {
    * Pairs every Hanzi of the text with its keys, as in "我ㄨㄛˇ們ㄇㄣ˙", while
    * any other char stays as it is. The first tone is typed with the space
    * bar, as in "今ㄐㄧㄣ 天ㄊㄧㄢ", except at the end of the text. A Hanzi
-   * without a reading has no keys.
+   * without a reading has no keys. The forced keys of a Hanzi, by its UTF-16
+   * offset in the text, win over its phrases.
    */
-  toGlyphs(text: string): string {
+  toGlyphs(
+    text: string,
+    forced: ReadonlyMap<number, string> = new Map(),
+  ): string {
     return text
-      .replace(/\p{Script=Han}+/gu, (run) => {
+      .replace(/\p{Script=Han}+/gu, (run, offset: number) => {
         const chars = [...run];
-        const syllables = this.#read(chars);
+        let at = offset;
+        const keys = chars.map((char) => {
+          const keys = forced.get(at);
+          at += char.length;
+          return keys;
+        });
+        const syllables = this.#read(chars, keys);
         return chars.map((char, i) => char + syllables[i]).join("");
       })
       .trimEnd();
   }
 
   /** Returns the keys of every character. */
-  #read(chars: readonly string[]): string[] {
+  #read(
+    chars: readonly string[],
+    forced: readonly (string | undefined)[],
+  ): string[] {
     // best[i] is the last phrase of the most likely reading of the first
     // i characters, the phrases before it are found backwards.
     const best: { score: number; length: number; keys: string }[] = [
@@ -70,7 +115,12 @@ export class ZhuyinReader {
     ];
     for (let i = 1; i <= chars.length; i++) {
       for (let n = 1; n <= Math.min(i, this.#maxLength); n++) {
-        const phrase = this.#phrases.get(chars.slice(i - n, i).join(""));
+        // A forced reading is a phrase of its own, and the likeliest one.
+        const phrase = forced.slice(i - n, i).some((keys) => keys != null)
+          ? n === 1
+            ? { keys: forced[i - 1]!, score: 0 }
+            : null
+          : this.#phrases.get(chars.slice(i - n, i).join(""));
         if (phrase != null) {
           const score = best[i - n].score + phrase.score;
           if (best[i] == null || score > best[i].score) {
@@ -85,11 +135,28 @@ export class ZhuyinReader {
       };
     }
     const phrases: string[][] = [];
+    // The phrase readings already have the tone sandhi of their "一" and
+    // "不", only a "不" ending a phrase and a "一" of its own depend on the
+    // next phrase. A "一" ending a word keeps its tone, as in "統一", unless
+    // it counts what follows, as in "這一夜".
+    const free: boolean[] = [];
     for (let i = chars.length; i > 0; i -= best[i].length) {
-      const { keys } = best[i];
+      const { length, keys } = best[i];
       // A syllable ends with its tone mark, or with the space of a first tone.
       phrases.push(keys === "" ? [""] : keys.match(/[^ˊˇˋ˙ ]+[ˊˇˋ˙ ]/gu)!);
+      free[i - 1] =
+        forced[i - 1] == null &&
+        (length === 1 ||
+          chars[i - 1] === "不" ||
+          "這那哪每另同任某".includes(chars[i - 2] ?? "_"));
     }
-    return phrases.reverse().flat();
+    const syllables = phrases.reverse().flat();
+    for (let i = chars.length - 1; i >= 0; i--) {
+      if (free[i]) {
+        syllables[i] =
+          sandhi(chars, i, toneOf(syllables[i + 1] ?? "")) ?? syllables[i];
+      }
+    }
+    return syllables;
   }
 }

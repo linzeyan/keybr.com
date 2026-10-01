@@ -18,15 +18,21 @@
  * The readings of every character and corpus phrase let the browser read the
  * Hanzi of a custom text, and are used here to read the books. A book pairs
  * every Hanzi with its keystrokes, as in "我ㄨㄛˇ們ㄇㄣ˙", so that the Hanzi
- * are displayed while their keys are typed. A punctuation is typed with its
- * own key of the layout, like in McBopomofo.
+ * are displayed while their keys are typed. A punctuation is typed with the
+ * keys of the input method of the user. Where the phrases read a Hanzi of a
+ * book wrong, its reading follows it in the book source, as in "從茲ㄗ".
+ *
+ * McBopomofo maps keys to Hanzi, so it accepts several readings of a phrase in
+ * no particular order, like the colloquial "ㄗㄜˇ ㄇㄛ˙" of "怎麼". We pick the
+ * standard reading of every phrase, and pronounce "一" and "不" with their
+ * tone sandhi.
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 import { Language } from "@keybr/keyboard";
 import { XorShift128Plus } from "@keybr/rand";
-import { phraseScale, ZhuyinReader } from "@keybr/zhuyin";
+import { phraseScale, sandhi, toneOf, ZhuyinReader } from "@keybr/zhuyin";
 import chalk from "chalk";
 import { sortByCount, toCsv, type Word } from "./language/words.ts";
 import { pathTo } from "./root.ts";
@@ -50,6 +56,43 @@ const readAs = new Map([
   ["𧈢", "蚱"],
   ["𤟹", "禺"],
 ]);
+// The pronunciation of the characters that McBopomofo prefers to type in
+// another way, like the particles with the first tone.
+const standardReadings = new Map([
+  ["了", "ㄌㄜ˙"],
+  ["們", "ㄇㄣ˙"],
+  ["呢", "ㄋㄜ˙"],
+  ["嗎", "ㄇㄚ˙"],
+  ["吧", "ㄅㄚ˙"],
+  ["啊", "ㄚ˙"],
+  ["呀", "ㄧㄚ˙"],
+  ["哩", "ㄌㄧ˙"],
+  ["啦", "ㄌㄚ˙"],
+  ["嘛", "ㄇㄚ˙"],
+  ["咧", "ㄌㄧㄝ˙"],
+  ["咱", "ㄗㄢˊ"],
+  ["哦", "ㄛˊ"],
+]);
+// The colloquial readings that McBopomofo accepts, as in "怎麼" and "那時".
+const colloquial = new Set([
+  "麼ㄇㄛ˙",
+  "麼ㄇㄛˊ",
+  "那ㄋㄚˇ",
+  "那ㄋㄟˋ",
+  "這ㄓㄟˋ",
+  "哪ㄋㄟˇ",
+  "較ㄐㄧㄠˇ",
+]);
+// The variant readings that some phrases of McBopomofo have only, as in
+// "怎的" and "波心", replaced by the standard ones. The erhua "兒" is typed
+// with its own tone in every input method.
+const variants = new Map([
+  ["怎ㄗㄜˇ", "ㄗㄣˇ"],
+  ["什ㄕㄣˊ", "ㄕㄜˊ"],
+  ["甚ㄕㄣˊ", "ㄕㄜˊ"],
+  ["波ㄆㄛ", "ㄅㄛ"],
+  ["兒ㄦ", "ㄦˊ"],
+]);
 const books = [
   "zh-tw-baihua",
   "zh-tw-nahan",
@@ -67,55 +110,64 @@ const [base, heterophony, mappings, occ] = await Promise.all(
 
 // A polyphonic character is read in its most common way only,
 // otherwise the rare readings of "的" would be as frequent as "ㄉㄜ˙".
-const primaryReadings = new Map<string, string[]>();
+const primaryReadings = new Map<string, string>(standardReadings);
 for (const [char, reading] of rows(heterophony)) {
   if (!primaryReadings.has(char)) {
-    primaryReadings.set(char, [reading]);
+    primaryReadings.set(char, reading);
   }
 }
-// The readings of the original Big5 dictionary come first, the later ones
-// are mostly colloquial, like "ㄓㄟˋ" for "這".
+const phraseReadings = new Map<string, string[]>();
+for (const [phrase, ...syllables] of rows(mappings)) {
+  push(phraseReadings, phrase, syllables.join(" "));
+}
+const occCounts = new Map<string, number>();
+for (const [phrase, count] of rows(occ)) {
+  if (/^\p{Script=Han}+$/u.test(phrase)) {
+    occCounts.set(phrase, Number(count));
+  }
+}
+// The phrases with a single reading tell how often a character is read in
+// each way, otherwise "放" would be read "ㄈㄤˇ", but a neutral tone is read
+// in a phrase only, as in "東西". Then the readings of the original Big5
+// dictionary come first, the later ones are mostly colloquial, like "ㄓㄟˋ"
+// for "這".
+const usage = new Map<string, number>();
+for (const [phrase, count] of occCounts) {
+  const readings = phraseReadings.get(phrase);
+  if (readings?.length === 1) {
+    const syllables = readings[0].split(" ");
+    [...phrase].forEach((char, i) => {
+      const key = char + syllables[i];
+      usage.set(key, (usage.get(key) ?? 0) + count);
+    });
+  }
+}
 const charReadings = new Map<string, string[]>();
 for (const [char, reading] of rows(base).sort(
   (a, b) => Number(a[4] !== "big5") - Number(b[4] !== "big5"),
 )) {
   push(charReadings, char, reading);
 }
-const phraseReadings = new Map<string, string[]>();
-for (const [phrase, ...syllables] of rows(mappings)) {
-  push(phraseReadings, phrase, syllables.join(" "));
+const usageOf = (char: string, reading: string) =>
+  reading.endsWith("˙") ? -1 : (usage.get(char + reading) ?? 0);
+for (const [char, readings] of charReadings) {
+  readings.sort((a, b) => usageOf(char, b) - usageOf(char, a));
 }
 
-const occCounts = new Map<string, number>();
 let occNorm = 0;
-const phrases: { readonly keys: readonly string[]; readonly count: number }[] =
-  [];
-for (const [phrase, count] of rows(occ)) {
-  if (!/^\p{Script=Han}+$/u.test(phrase)) {
-    continue;
-  }
-  occCounts.set(phrase, Number(count));
-  occNorm += phraseScale(phrase) * Number(count);
-  const readings = readingsOf(phrase);
-  if (readings.length === 0) {
-    continue;
-  }
-  phrases.push({ keys: readings.map(toKeystrokes), count: Number(count) });
-}
-
-// Phrase readings differ mostly by the tone sandhi of "一" and "不",
-// or by an optional neutral tone, so they share the phrase frequency.
-const units: { readonly keys: string; readonly weight: number }[] = [];
-for (const { keys, count } of phrases) {
-  for (const key of keys) {
-    units.push({ keys: key, weight: count / keys.length });
+const phrases: { readonly keys: string; readonly count: number }[] = [];
+for (const [phrase, count] of occCounts) {
+  occNorm += phraseScale(phrase) * count;
+  const reading = readingOf(phrase);
+  if (reading != null) {
+    phrases.push({ keys: toKeystrokes(reading), count });
   }
 }
 
-const cumulative = new Float64Array(units.length);
+const cumulative = new Float64Array(phrases.length);
 let total = 0;
-for (let i = 0; i < units.length; i++) {
-  cumulative[i] = total += units[i].weight;
+for (let i = 0; i < phrases.length; i++) {
+  cumulative[i] = total += phrases[i].count;
 }
 
 // Not LCG, its period is too short for millions of samples.
@@ -123,7 +175,7 @@ const random = XorShift128Plus(1);
 const counts = new Map<string, number>();
 let chunk = "";
 for (let n = 0; n < sampleSize; n++) {
-  for (const char of units[search(random() * total)].keys) {
+  for (const char of phrases[search(random() * total)].keys) {
     if (char === " ") {
       counts.set(chunk, (counts.get(chunk) ?? 0) + 1);
       chunk = "";
@@ -140,14 +192,13 @@ writeFileSync(
   gzipSync(toCsv(dict)),
 );
 
-// Homophones like "是" and "事" become the same word, and a phrase with
-// several readings contributes its first one only.
+// Homophones like "是" and "事" become the same word.
 const words = new Set<string>();
 for (const { keys } of [...phrases].sort((a, b) => b.count - a.count)) {
   if (words.size === 10000) {
     break;
   }
-  words.add(keys[0].trimEnd());
+  words.add(keys.trimEnd());
 }
 writeFileSync(
   pathTo(`../keybr-content-words/lib/data/words-${language.id}.json`),
@@ -169,17 +220,17 @@ for (const char of new Set([
   ...primaryReadings.keys(),
   ...charReadings.keys(),
 ])) {
-  const reading = readingsOf(char)[0];
+  const reading = readingOf(char);
   if (/^\p{Script=Han}$/u.test(char) && reading != null) {
     addReading(char, reading, occCounts.get(char) ?? 0);
   }
 }
 for (const [char, as] of readAs) {
-  addReading(char, readingsOf(as)[0], 0);
+  addReading(char, readingOf(as)!, 0);
 }
 for (const [phrase, count] of occCounts) {
   const length = [...phrase].length;
-  const reading = readingsOf(phrase)[0];
+  const reading = readingOf(phrase);
   if (length > 1 && reading?.split(" ").length === length) {
     addReading(phrase, reading, count);
   }
@@ -213,12 +264,76 @@ for (const id of books) {
   );
 }
 
-function readingsOf(phrase: string): string[] {
-  return (
-    ([...phrase].length === 1
-      ? (primaryReadings.get(phrase) ?? charReadings.get(phrase))
-      : phraseReadings.get(phrase)) ?? []
-  ).filter((reading) => language.test(reading.replaceAll(" ", "")));
+/**
+ * Returns the standard reading of a phrase, as in "ㄧˊ ㄍㄜ˙" for "一個".
+ * The "一" and "不" ending a phrase keep their tone, the reader changes them
+ * by the next phrase.
+ */
+function readingOf(phrase: string): string | undefined {
+  const chars = [...phrase];
+  const primary = primaryReadings.get(phrase);
+  const readings = (
+    (chars.length > 1
+      ? phraseReadings.get(phrase)
+      : primary != null
+        ? [primary]
+        : charReadings.get(phrase)) ?? []
+  )
+    .filter((reading) => language.test(reading.replaceAll(" ", "")))
+    .map((reading) => reading.split(" "));
+  if (readings.length === 0) {
+    return undefined;
+  }
+  // A colloquial reading is the last resort. The neutral tone is the
+  // standard one where the other readings differ by its tone only, as in
+  // "他們" and "意思".
+  const letters = (syllable: string) => syllable.replace(/[ˊˇˋ˙]$/u, "");
+  const score = (syllables: readonly string[]) =>
+    syllables.reduce(
+      (score, syllable, i) =>
+        colloquial.has(chars[i] + syllable)
+          ? score - 2
+          : syllable.endsWith("˙") &&
+              readings.some(
+                (other) =>
+                  other[i] !== syllable &&
+                  letters(other[i]) === letters(syllable),
+              )
+            ? score + 1
+            : score,
+      0,
+    );
+  const syllables = (
+    chars.length > 1
+      ? readings.reduce((a, b) => (score(b) > score(a) ? b : a))
+      : readings[0]
+  ).map((syllable, i) => variants.get(chars[i] + syllable) ?? syllable);
+  for (let i = chars.length - 1; i >= 0; i--) {
+    syllables[i] =
+      sandhi(chars, i, baseTone(chars[i + 1], syllables[i + 1]))?.trimEnd() ??
+      syllables[i];
+  }
+  return syllables.join(" ");
+}
+
+/**
+ * Returns the tone of a syllable, or the tone of a neutral tone syllable when
+ * stressed, which decides the sandhi of "一" in "一個".
+ */
+function baseTone(char: string | undefined, syllable: string | undefined) {
+  if (char == null || syllable == null) {
+    return 0;
+  }
+  const reading = syllable.endsWith("˙")
+    ? charReadings
+        .get(char)
+        ?.find(
+          (reading) =>
+            !reading.endsWith("˙") &&
+            reading.replace(/[ˊˇˋ]$/u, "") === syllable.slice(0, -1),
+        )
+    : syllable;
+  return reading != null ? toneOf(toKeystrokes(reading)) : 0;
 }
 
 /**
@@ -232,7 +347,21 @@ function toGlyphs(text: string): string {
   if (text.includes(" ")) {
     throw new Error(`A space in "${text}"`);
   }
-  const glyphs = reader.toGlyphs(text);
+  // The reading following a Hanzi, as in "從茲ㄗ", wins over its phrases.
+  let plain = "";
+  const forced = new Map<number, string>();
+  for (const part of text.split(/(\p{Script=Bopomofo}+[ˊˇˋ˙]?)/u)) {
+    if (/^\p{Script=Bopomofo}/u.test(part)) {
+      const char = [...plain].at(-1) ?? "";
+      if (!/^\p{Script=Han}$/u.test(char) || !language.test(part)) {
+        throw new Error(`Bad reading "${part}" in "${text}"`);
+      }
+      forced.set(plain.length - char.length, toKeystrokes(part));
+    } else {
+      plain += part;
+    }
+  }
+  const glyphs = reader.toGlyphs(plain, forced);
   // Every syllable starts with a letter, a Hanzi without one has no reading.
   const unread = /\p{Script=Han}(?!\p{Script=Bopomofo})/u.exec(glyphs);
   if (unread != null) {
@@ -250,7 +379,7 @@ function toKeystrokes(reading: string): string {
     .join("");
 }
 
-/** Finds the first unit whose cumulative weight exceeds the given value. */
+/** Finds the first phrase whose cumulative count exceeds the given value. */
 function search(value: number): number {
   let lo = 0;
   let hi = cumulative.length - 1;
@@ -272,7 +401,7 @@ function printStats(dict: readonly Word[]): void {
   const chars = sum(dict, ([word, count]) => word.length * count);
   const top = dict.slice(0, 10000);
   const pct = (a: number, b: number) => `${((a / b) * 100).toFixed(1)}%`;
-  console.log(`[${language.id}] ${units.length} phrase readings`);
+  console.log(`[${language.id}] ${phrases.length} phrase readings`);
   console.log(`[${language.id}] ${dict.length} unique chunks, ${tokens} total`);
   console.log(
     `[${language.id}] mean chunk length ${(chars / tokens).toFixed(2)}`,
